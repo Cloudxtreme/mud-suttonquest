@@ -5,6 +5,7 @@ class Room
     private $sizeY;
 
     private $zlevel;
+    private $transparent;
 
     private $north;
     private $south;

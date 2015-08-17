@@ -4,6 +4,8 @@ class Room
     private $sizeX;
     private $sizeY;
 
+    private $zlevel;
+
     private $north;
     private $south;
     private $east;

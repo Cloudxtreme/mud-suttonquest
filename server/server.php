@@ -29,7 +29,7 @@ function connection_handler($client) {
             printf("[-] Client Disconnected");
             return false;
         } else {
-            printf("[+] Sent Client %s", $read);
+            printf("[+] Received: %s", $read);
         }
     }
 

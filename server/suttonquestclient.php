@@ -15,8 +15,20 @@ class SuttonQuestClient {
     }
 
     public function close() {
-        socket_shutdown($this->connection);
-        socket_close($this->conection);
+        socket_shutdown($this->_connection);
+        socket_close($this->_conection);
+    }
+
+    public function read() {
+        if(($buffer = socket_read($this->_connection, 1024, PHP_BINARY_READ)) === false) {
+            return null;
+        }
+
+        return $buffer;
+    }
+
+    public function send($msg) {
+        socket_write($this->_connection, $msg, strlen($msg));
     }
 }
 

@@ -1,4 +1,5 @@
 <?php
+
 class SuttonQuestClient {
     private $_connection;
     private $_address;
@@ -18,4 +19,5 @@ class SuttonQuestClient {
         socket_close($this->conection);
     }
 }
+
 ?>

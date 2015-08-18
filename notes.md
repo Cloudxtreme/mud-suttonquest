@@ -5,6 +5,9 @@
 +Need chat system, including tell <username> (person), yell <message> (world), say<message> (room). Might be integrated into command system.
 +Classes for World, Place/Room, Items?, Player, Action/Command?, Task?
 
+#ISSUES
+after a user disconnects, message lag for all clients occurs - only occurs if terminal window is closed (i.e. not a problem if you quit through telnet like normal)
+
 #APPROACH
 Build world from text file? Comprise world of 2d (3d?) Array of Rooms, x-y-(z?) adjacent rooms are automatically connected.
 Store user stuff in database.

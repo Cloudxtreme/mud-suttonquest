@@ -14,9 +14,6 @@ $result = socket_connect($socket, $address, $port) or die("could not connect\n")
 socket_write($socket, $message, strlen($message)) or die("could not write to socket\n");
 
 $result = socket_read($socket, 1024);
-
 echo '<p>reply from server:' . $result . '</p>';
 
 socket_close($socket);
-
-?>

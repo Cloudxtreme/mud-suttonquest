@@ -47,5 +47,3 @@ class SuttonQuestClient {
         $this->_server->broadcast(array('data' => "connected\n", 'type' => 'msg'));
     }
 }
-
-?>

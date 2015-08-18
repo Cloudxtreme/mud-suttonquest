@@ -111,10 +111,10 @@ class SuttonQuestServer {
 
     public function handle_process() {
         $header = fread($this->pipe, 4);
-        $len = $this->bytesToInt($header);
+		$len = $this->bytesToInt($header);
 
         //add some error checking here
-        $message = unserialize(fread($this->pipe, $len));
+        $message = unserialize(fread( $this->pipe, $len));
 
         if($message['type'] == 'msg') {
             $client = $this->connections[$message['pid']];
@@ -149,5 +149,3 @@ class SuttonQuestServer {
 		return $chars;
 	}
 }
-
-?>

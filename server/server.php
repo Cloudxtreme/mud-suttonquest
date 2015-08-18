@@ -9,8 +9,6 @@ function connection_handler($client) {
         return $pid;
     }
 
-    $read = '';
-
     printf("[+] Client Connected");
     //printf("[+] Client %s connected at port %d", $client->get_address(), $client->get_port());
 
@@ -36,4 +34,3 @@ $server = new SuttonQuestServer();
 $server->init();
 $server->set_conn_handler('connection_handler');
 $server->listen();
-?>

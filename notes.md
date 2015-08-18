@@ -8,6 +8,8 @@
 #APPROACH
 Build world from text file?
 Store user stuff in database.
+Use WebSockets over AJAX approach - more scalable and less bandwidth than with AJAX requests.
+2 Sides? join as either?
 
 #BRIEF MULTIUSER DUNGEON
 You are an adventurer in a virtual world made up of unit rooms where each room is either transparent or solid. You can move in any of these 6 directions: north, south, east, west, up, down. Each move is considered to take exactly one room and you can move only through transparent rooms.

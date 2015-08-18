@@ -6,7 +6,7 @@ function connection_handler($client) {
         die('could not fork');
     } else if ($pid) {
         //we are parent process
-        return;
+        return $pid;
     }
 
     $read = '';
@@ -14,26 +14,19 @@ function connection_handler($client) {
     printf("[+] Client Connected");
     //printf("[+] Client %s connected at port %d", $client->get_address(), $client->get_port());
 
+    $client->connected();
+
+    $read = '';
+
     while (true) {
         $read = $client->read();
-        if($read != '') {
-            $client->send('[' . date('g:i a') . ']: ' . $read);
-        } else {
+        if($read == '') {
             break;
         }
-
-        if(preg_replace('/[^a-z]/', '', $read) == 'exit') {
-            break;
-        }
-        if ($read === null) {
-            printf("[-] Client Disconnected");
-            return false;
-        } else {
-            printf("[+] Received: %s", $read);
-        }
+        $client->send_broadcast($read);
     }
 
-    $client->close();
+    $client->disconnected();
     printf("[-] Client Disconnected");
 }
 

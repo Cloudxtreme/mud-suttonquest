@@ -17,7 +17,7 @@ function connection_handler($client) {
     while (true) {
         $read = $client->read();
         if($read != '') {
-            $client->send('[' . date() . ']: ' . $read);
+            $client->send('[' . date('g:i a') . ']: ' . $read);
         } else {
             break;
         }

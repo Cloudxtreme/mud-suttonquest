@@ -16,7 +16,7 @@ class SuttonQuestClient {
 
     public function close() {
         socket_shutdown($this->_connection);
-        socket_close($this->_conection);
+        socket_close($this->_connection);
     }
 
     public function read() {

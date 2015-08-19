@@ -5,13 +5,14 @@ SET NAMES utf8;
 DROP TABLE IF EXISTS update_queue;
 CREATE TABLE update_queue (
 	updateID INT NOT NULL AUTO_INCREMENT,
-	playerID INT NOT NULL,
+	playerID INT,
 	time_queued DATETIME NOT NULL,
 	update_type VARCHAR(10),
 	update_body VARCHAR(50),
 	CONSTRAINT update_queue_updateID_pk
 		PRIMARY KEY (updateID),
 	CONSTRAINT update_queue_playerID_fk
+		FOREIGN KEY (playerID)
 		REFERENCES players(playerID)
 		ON DELETE SET NULL
 );
@@ -32,6 +33,7 @@ CREATE TABLE inventories (
 	CONSTRAINT inventories_inventoryID_pk
 		PRIMARY KEY (inventoryID),
 	CONSTRAINT inventories_playerID_fk
+		FOREIGN KEY (playerID)
 		REFERENCES players(playerID)
 		ON DELETE CASCADE
 );

@@ -6,7 +6,7 @@
 +Classes for World, Place/Room, Items?, Player, Action/Command?, Task?
 
 #ISSUES
-after a user disconnects, message lag for all clients occurs - only occurs if terminal window is closed (i.e. not a problem if you quit through telnet like normal)
+
 
 #APPROACH
 Build world from text file? Comprise world of 2d (3d?) Array of Rooms, x-y-(z?) adjacent rooms are automatically connected.
@@ -14,6 +14,8 @@ Store user stuff in database.
 Use WebSockets over AJAX approach - more scalable and less bandwidth than with AJAX requests.
 
 2 Opposing forces, monsters and humans. You fight to capture a territory, you can capture a room if it's empty, and adjacent block is also owned by your team. A room is automatically captured if all adjacent rooms belong to a team. If an enemy is in the room, you fight. Every now and then, a megabeast spawns somewhere random, a heads towards the team with the most territory/rooms and begins killing players, and recapping rooms (to neutral). Capping territories generates gold, which can be spent at the Start/Shop node for each team. Items include weapons, which have a durability, and can be used to inflict extra damage.
+
+4 megabeasts spawn at set locations, in territory. Only capture certain rooms, which give team-wide benefits.
 
 Server will send messages/updates to all connected clients, and will choose what to send accordingly.
 

@@ -17,15 +17,42 @@ function connection_handler($client) {
     while (true) {
         $read = $client->read();
         if($read != '') {
-            //write to client
-            $client->send('[' . date('g:i a') . ']: ' . $read);
+            //parse the json here, and do something with it.
+            $json = json_decode($read, true);
+            if(!is_array($json)) {
+                //bad message
+                break;
+            } else {
+                switch($json['cmd']) {
+                    case 'say':
+                        //add to queue
+                        $cmd = $json['cmd'];
+                        $body = $json['body'];
+                        $query = "INSERT INTO update_queue (updateID, playerID, time_queued, update_type, update_body) VALUES (NULL, 1, NOW(), '$cmd', '$body');";
+                        $send = $client->insert($query);
+                        if($send) {
+                            $client->send('[' . date('g:i a') . ']: ' . 'message success');
+                        } else {
+                            $client->send('[' . date('g:i a') . ']: ' . 'message failure');
+                        }
+
+                        break;
+                    case 'move':
+                        $client->send('[' . date('g:i a') . ']: ' . $json['body']);
+                        break;
+                    default:
+                        $client->send('[' . date('g:i a') . ']: ' . 'incorrect');
+                        break;
+                }
+            }
+
         } else {
             break;
         }
-
+        /*
         if(preg_replace('/[^a-z]/', '', $read) == 'exit') {
             break;
-        }
+        }*/
         if ($read === null) {
             printf("[-] Client Disconnected\n");
             return false;

@@ -4,7 +4,7 @@ $(document).ready(function() {
         console.log("post test");
         $.ajax({
             method: 'POST',
-            url: 'get.php',
+            url: 'request.php',
             dataType: "json",
             data: JSON.stringify({
 	            msg: $('#message').val()
@@ -21,7 +21,7 @@ $(document).ready(function() {
     console.log("test");
     $.ajax({
         method: 'GET',
-        url: 'get.php',
+        url: 'request.php',
         dataType: "json",
         contentType: "application/json"
     }).success( function(data) {

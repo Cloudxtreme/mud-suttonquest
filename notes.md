@@ -5,8 +5,19 @@
 +Need chat system, including tell <username> (person), yell <message> (world), say<message> (room). Might be integrated into command system.
 +Classes for World, Place/Room, Items?, Player, Action/Command?, Task?
 
-#ISSUES
+#TO-DO
+World Logic, storing rooms in memory (and reading from world file).
+Login system, and assigning player to humans or monsters
+Megabeast + path finding/AI
+Send player world state on load
+Movement Logic
+Fight Logic
 
+client update every second, and client processing for changes
+client json reading (for updates)
+GUI
+player spawns at start point on login (i.e. no persistant location)
+global cooldowns for players
 
 #APPROACH
 Build world from text file? Comprise world of 2d (3d?) Array of Rooms, x-y-(z?) adjacent rooms are automatically connected.

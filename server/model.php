@@ -1,9 +1,11 @@
 <?php
+/*
+class World {
+
+}*/
+
 class Room
 {
-    private $sizeX;
-    private $sizeY;
-
     private $zlevel;
     private $transparent;
 

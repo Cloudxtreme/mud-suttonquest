@@ -2,8 +2,6 @@
 
 class SuttonQuestRequest {
     private $method = '';
-    private $address = '178.63.103.197';
-    private $port = '5000';
 
     public function __construct($request) {
         //setup headers
@@ -36,7 +34,14 @@ class SuttonQuestRequest {
     }
 
     public function process() {
+        //call server here
+        //setup address and port
+        $address = '178.63.103.197';
+        $port = '5000';
+
         $message = 'Hello World';
+
+        //echo '<p>message to server:' . $message . '</p>';
 
         $socket = socket_create(AF_INET, SOCK_STREAM, 0) or die("could not create socket\n");
         $result = socket_connect($socket, $address, $port) or die("could not connect\n");
@@ -45,9 +50,11 @@ class SuttonQuestRequest {
 
         $result = socket_read($socket, 1024);
 
+        //echo '<p>reply from server:' . $result . '</p>';
+
         socket_close($socket);
-        $ret = array('data' => $result);
-        return $this->response($ret);
+
+        return $this->response($result);
     }
 
     private function response($data, $status = 200) {
@@ -70,5 +77,5 @@ try {
 	$response = new SuttonQuestRequest($_REQUEST['request']); //, $_SERVER['HTTP_ORIGIN']);
 	echo $response->process();
 } catch (Exception $e) {
-	echo json_encode(array('error' => $e->getMessage()));
+	echo json_encode(Array('error' => $e->getMessage()));
 }

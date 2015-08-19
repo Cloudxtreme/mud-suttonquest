@@ -3,6 +3,8 @@
 class SuttonQuestRequest {
     private $method = '';
     private $file = NULL; //Input of put request
+    private $address = '178.63.103.197';
+    private $port = '5000';
 
     public function __construct($request) {
         //setup headers
@@ -43,42 +45,22 @@ class SuttonQuestRequest {
             //json from file
             $json = json_decode($this->file, true);
 			$message = $json['msg'];
-
-            //server
-            $address = '178.63.103.197';
-            $port = '5000';
-
-            $socket = socket_create(AF_INET, SOCK_STREAM, 0) or die("could not create socket\n");
-            $result = socket_connect($socket, $address, $port) or die("could not connect\n");
-
-            socket_write($socket, $message, strlen($message)) or die("could not write to socket\n");
-
-            $result = socket_read($socket, 1024);
-
-            socket_close($socket);
-
-            return $this->response($result);
+            return $this->response($message);
         }
         if ($this->method == 'GET') {
-            $address = '178.63.103.197';
-            $port = '5000';
-
             $message = 'Hello World';
-
-            $socket = socket_create(AF_INET, SOCK_STREAM, 0) or die("could not create socket\n");
-            $result = socket_connect($socket, $address, $port) or die("could not connect\n");
-
-            socket_write($socket, $message, strlen($message)) or die("could not write to socket\n");
-
-            $result = socket_read($socket, 1024);
-
-            socket_close($socket);
-
-            return $this->response($result);
+            return $this->response($message);
         }
     }
 
-    private function response($data, $status = 200) {
+    private function response($message, $status = 200) {
+        //server
+        $socket = socket_create(AF_INET, SOCK_STREAM, 0);
+        $result = socket_connect($socket, $this->address, $this->port);
+        socket_write($socket, $message, strlen($message));
+        $data = socket_read($socket, 1024);
+        socket_close($socket);
+        //response to client
         header("HTTP/1.1 " . $status . " " . $this->_requestStatus($status));
 		return json_encode($data);
     }

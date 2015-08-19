@@ -43,9 +43,9 @@ class SuttonQuestRequest {
     public function process() {
         if ($this->method == 'POST') {
             //json from file
-            $json = json_decode($this->file, true);
-			$message = $json['msg'];
-            return $this->response($message);
+            //$json = json_decode($this->file, true);
+			//$message = $json['cmd'];
+            return $this->response($this->file);
         }
         if ($this->method == 'GET') {
             $message = 'Hello World';

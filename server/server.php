@@ -11,7 +11,7 @@ function connection_handler($client) {
 
     $read = '';
 
-    printf("[+] Client Connected");
+    printf("[+] Client Connected\n");
     //printf("[+] Client %s connected at port %d", $client->get_address(), $client->get_port());
 
     while (true) {
@@ -27,16 +27,16 @@ function connection_handler($client) {
             break;
         }
         if ($read === null) {
-            printf("[-] Client Disconnected");
+            printf("[-] Client Disconnected\n");
             return false;
         } else {
             //received from client
-            printf("[+] Received: %s", $read);
+            printf("[+] Received: %s\n", $read);
         }
     }
 
     $client->close();
-    printf("[-] Client Disconnected");
+    printf("[-] Client Disconnected\n");
 }
 
 require "suttonquestserver.php";

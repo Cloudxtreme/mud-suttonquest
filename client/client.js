@@ -1,7 +1,6 @@
 $(document).ready(function() {
     $('#submit-button').click( function(e) {
-        e.preventDefault();
-        console.log("post test");
+        e.preventDefault(); //prevent page reload
         $.ajax({
             method: 'POST',
             url: 'request.php',
@@ -13,19 +12,21 @@ $(document).ready(function() {
         }).success( function(data) {
             console.log("got here");
             $('#result').html(data);
+        }).error( function() {
+            $('#result').html("could not reach server");
         });
         return false; //prevent page reload
     });
 
     //get request needs to run in a loop
-    console.log("test");
     $.ajax({
         method: 'GET',
         url: 'request.php',
         dataType: "json",
         contentType: "application/json"
     }).success( function(data) {
-        console.log("got here");
         $('#result').html(data);
+    }).error( function() {
+        $('#result').html("could not reach server");
     });
 });

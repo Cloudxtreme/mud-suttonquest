@@ -2,6 +2,7 @@
 
 class SuttonQuestRequest {
     private $method = '';
+    private $file = NULL; //Input of put request
 
     public function __construct($request) {
         //setup headers
@@ -13,7 +14,11 @@ class SuttonQuestRequest {
 
         switch($this->method) {
             case 'GET':
+                $this->request = $this->_clean($_GET);
+                break;
+            case 'POST':
                 $this->request = $this->_clean($_POST);
+                $this->file = file_get_contents("php://input");
                 break;
             default:
                 //invalid
@@ -34,27 +39,43 @@ class SuttonQuestRequest {
     }
 
     public function process() {
-        //call server here
-        //setup address and port
-        $address = '178.63.103.197';
-        $port = '5000';
+        if ($this->method == 'POST') {
+            //json from file
+            $json = json_decode($this->file, true);
+			$message = $json['msg'];
 
-        $message = 'Hello World';
+            //server
+            $address = '178.63.103.197';
+            $port = '5000';
 
-        //echo '<p>message to server:' . $message . '</p>';
+            $socket = socket_create(AF_INET, SOCK_STREAM, 0) or die("could not create socket\n");
+            $result = socket_connect($socket, $address, $port) or die("could not connect\n");
 
-        $socket = socket_create(AF_INET, SOCK_STREAM, 0) or die("could not create socket\n");
-        $result = socket_connect($socket, $address, $port) or die("could not connect\n");
+            socket_write($socket, $message, strlen($message)) or die("could not write to socket\n");
 
-        socket_write($socket, $message, strlen($message)) or die("could not write to socket\n");
+            $result = socket_read($socket, 1024);
 
-        $result = socket_read($socket, 1024);
+            socket_close($socket);
 
-        //echo '<p>reply from server:' . $result . '</p>';
+            return $this->response($result);
+        }
+        if ($this->method == 'GET') {
+            $address = '178.63.103.197';
+            $port = '5000';
 
-        socket_close($socket);
+            $message = 'Hello World';
 
-        return $this->response($result);
+            $socket = socket_create(AF_INET, SOCK_STREAM, 0) or die("could not create socket\n");
+            $result = socket_connect($socket, $address, $port) or die("could not connect\n");
+
+            socket_write($socket, $message, strlen($message)) or die("could not write to socket\n");
+
+            $result = socket_read($socket, 1024);
+
+            socket_close($socket);
+
+            return $this->response($result);
+        }
     }
 
     private function response($data, $status = 200) {

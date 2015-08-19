@@ -17,6 +17,7 @@ function connection_handler($client) {
     while (true) {
         $read = $client->read();
         if($read != '') {
+            //write to client
             $client->send('[' . date('g:i a') . ']: ' . $read);
         } else {
             break;
@@ -29,6 +30,7 @@ function connection_handler($client) {
             printf("[-] Client Disconnected");
             return false;
         } else {
+            //received from client
             printf("[+] Received: %s", $read);
         }
     }

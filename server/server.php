@@ -6,25 +6,34 @@ function connection_handler($client) {
         die('could not fork');
     } else if ($pid) {
         //we are parent process
-        return $pid;
+        return;
     }
+
+    $read = '';
 
     printf("[+] Client Connected");
     //printf("[+] Client %s connected at port %d", $client->get_address(), $client->get_port());
 
-    $client->connected();
-
-    $read = '';
-
     while (true) {
         $read = $client->read();
-        if($read == '') {
+        if($read != '') {
+            $client->send('[' . date('g:i a') . ']: ' . $read);
+        } else {
             break;
         }
-        $client->send_broadcast($read);
+
+        if(preg_replace('/[^a-z]/', '', $read) == 'exit') {
+            break;
+        }
+        if ($read === null) {
+            printf("[-] Client Disconnected");
+            return false;
+        } else {
+            printf("[+] Received: %s", $read);
+        }
     }
 
-    $client->disconnected();
+    $client->close();
     printf("[-] Client Disconnected");
 }
 

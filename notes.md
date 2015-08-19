@@ -13,11 +13,11 @@ Build world from text file? Comprise world of 2d (3d?) Array of Rooms, x-y-(z?) 
 Store user stuff in database.
 Use WebSockets over AJAX approach - more scalable and less bandwidth than with AJAX requests.
 
-2 Opposing forces, lets call the monsters and humans. You fight to capture a territory, you can capture a room if it's empty, and adjacent block is also owned by your team. A room is automatically captured if all adjacent rooms belong to a team. If an enemy is in the room, you fight. Every now and then, a megabeast spawns somewhere random, a heads towards the team with the most territory/rooms and begins killing players, and recapping rooms (to neutral).
+2 Opposing forces, monsters and humans. You fight to capture a territory, you can capture a room if it's empty, and adjacent block is also owned by your team. A room is automatically captured if all adjacent rooms belong to a team. If an enemy is in the room, you fight. Every now and then, a megabeast spawns somewhere random, a heads towards the team with the most territory/rooms and begins killing players, and recapping rooms (to neutral).
 
 Server will send messages/updates to all connected clients, and will choose what to send accordingly.
 
-#BRIEF MULTIUSER DUNGEON
+#MULTIUSER DUNGEON
 You are an adventurer in a virtual world made up of unit rooms where each room is either transparent or solid. You can move in any of these 6 directions: north, south, east, west, up, down. Each move is considered to take exactly one room and you can move only through transparent rooms.
 
 When in a room, you can see a description of the room and anything or anyone else in that room. Other adventurers also live in this world and from time to time, you will bump into them.

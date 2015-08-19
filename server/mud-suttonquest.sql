@@ -22,6 +22,7 @@ CREATE TABLE players (
 	playerID INT NOT NULL AUTO_INCREMENT,
 	username VARCHAR(50),
 	password VARCHAR(50),
+	last_update DATETIME,
 	CONSTRAINT players_playerID_pk
 		PRIMARY KEY (playerID)
 );

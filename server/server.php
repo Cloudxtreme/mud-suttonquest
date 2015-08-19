@@ -35,10 +35,15 @@ function connection_handler($client) {
                         } else {
                             $client->send('[' . date('g:i a') . ']: ' . 'message failure');
                         }
-
                         break;
                     case 'move':
                         $client->send('[' . date('g:i a') . ']: ' . $json['body']);
+                        break;
+                    case 'update':
+                        printf("[+] Updating Client");
+                        $playerID = 1;
+                        $query = "SELECT update_type, update_body FROM update_queue INNER JOIN players ON update_queue.playerID = players.playerID WHERE update_queue.playerID='$playerID' AND players.last_update < update_queue.time_queued;";
+                        $client->send(json_encode($client->query($query)));
                         break;
                     default:
                         $client->send('[' . date('g:i a') . ']: ' . 'incorrect');

@@ -42,14 +42,11 @@ class SuttonQuestRequest {
 
     public function process() {
         if ($this->method == 'POST') {
-            //json from file
-            //$json = json_decode($this->file, true);
-			//$message = $json['cmd'];
             return $this->response($this->file);
         }
         if ($this->method == 'GET') {
-            $message = 'Hello World';
-            return $this->response($message);
+            $send = array('cmd' => 'say', 'body' => 'hello world');
+            return $this->response(json_encode($send));
         }
     }
 
@@ -77,7 +74,7 @@ class SuttonQuestRequest {
 }
 
 try {
-	$response = new SuttonQuestRequest($_REQUEST['request']); //, $_SERVER['HTTP_ORIGIN']);
+	$response = new SuttonQuestRequest($_REQUEST['request']);
 	echo $response->process();
 } catch (Exception $e) {
 	echo json_encode(Array('error' => $e->getMessage()));

@@ -15,7 +15,6 @@ class SuttonQuestClient {
         $this->_port = $port;
 
         $this->_dbcon = mysqli_connect("localhost","suttonquest","Xzrr71^1","suttonquest");
-
         if (mysqli_connect_errno()) {
 			echo "Failed to connect to MySQL: " . mysqli_connect_error();
 		}

@@ -16,6 +16,7 @@ class SuttonQuestServer {
     }
 
     public function init() {
+        //generate world here
         $this->create_socket();
         $this->bind_Socket();
     }
@@ -34,6 +35,9 @@ class SuttonQuestServer {
         //listening loop
         while($this->_listen) {
             //add some error checking
+            //send world state here in connection handler.
+            //perform updates here too?
+            
             $client = socket_accept($this->socket_server);
             $socket_client = new SuttonQuestClient($client);
 

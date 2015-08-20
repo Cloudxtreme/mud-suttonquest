@@ -5,6 +5,7 @@ class SuttonQuestRequest {
     private $file = NULL; //Input of put request
     private $address = '178.63.103.197';
     private $port = '5000';
+    private $get_query = '';
 
     public function __construct($request) {
         //setup headers
@@ -15,9 +16,13 @@ class SuttonQuestRequest {
         $this->method = $_SERVER['REQUEST_METHOD'];
 
         switch($this->method) {
+            //getting updates, called initially to get world state, then every second in client
             case 'GET':
                 $this->request = $this->_clean($_GET);
+                $URI = $_SERVER['REQUEST_URI'];
+                $this->get_query = parse_url($URI, PHP_URL_QUERY);
                 break;
+            //posting changes, called whenever a client does an action, i.e. say hello
             case 'POST':
                 $this->request = $this->_clean($_POST);
                 $this->file = file_get_contents("php://input");
@@ -45,8 +50,18 @@ class SuttonQuestRequest {
             return $this->response($this->file);
         }
         if ($this->method == 'GET') {
-            $send = array('cmd' => 'say', 'body' => 'hello world');
-            return $this->response(json_encode($send));
+            //parse the get request 
+            $parts = explode('&', $this->get_query);
+            $cmd = explode('=', $parts[0]);
+            $body = explode('=', $parts[1]);
+
+            if($cmd[1] == 'update') {
+                $send = array('cmd' => $cmd[1], 'body' => $body[1]);
+                return $this->response(json_encode($send));
+            } else {
+                // need to fix this so it doesnt go through server
+                return $this->response(json_encode(array('error' => 'badly formatted request')));
+            }
         }
     }
 

@@ -40,16 +40,17 @@ function connection_handler($client) {
                         $client->send('[' . date('g:i a') . ']: ' . $json['body']);
                         break;
                     case 'update':
-                        printf("[+] Updating Client");
-                        $playerID = 1;
+                        $playerID = $json['body']; //the playerID
+                        printf("[+] Updating Client with playerID %d", $playerID);
                         $query = "SELECT update_type, update_body FROM update_queue INNER JOIN players ON update_queue.playerID = players.playerID WHERE update_queue.playerID='$playerID' AND players.last_update < update_queue.time_queued;";
+                        //if successful, update player last update time
                         $client->send(json_encode($client->query($query)));
                         break;
                     case 'initial_load':
                         //send world state, and set requesting playerID to last_update now()
                         break;
                     default:
-                        $client->send('[' . date('g:i a') . ']: ' . 'incorrect');
+                        $client->send(json_encode(array('error' => 'badly formatted request')));
                         break;
                 }
             }

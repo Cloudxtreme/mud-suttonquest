@@ -14,7 +14,6 @@ $(document).ready(function() {
         });
     }, 1000);
     */
-
     //perform initial load
     $.ajax({
         method: 'GET',
@@ -31,12 +30,12 @@ $(document).ready(function() {
                 var nodetype = '';
                 switch(nodes[j]) {
                     case 'T': nodetype = 'room'; break;
-                    case '-': nodetype = 'opaque';break;
-                    case 'M': nodetype = 'megabeast-spawn';break;
-                    case 'O': nodetype = 'objective';break;
+                    case '-': nodetype = 'opaque'; break;
+                    case 'M': nodetype = 'megabeast-spawn'; break;
+                    case 'O': nodetype = 'objective'; break;
                     case 'S': nodetype = 'spawn'; break;
                 }
-                $('<div class="node"></div>').addClass(nodetype).css({top: 40 * i, left: 40 * j}).appendTo('#map');
+                $('<div class="node"></div>').addClass(nodetype).css({top: 35 * i, left: 35 * j}).appendTo('#map');
             }
         }
     }).error( function() {
@@ -61,9 +60,13 @@ $(document).ready(function() {
             }),
             contentType: "application/json"
         }).success( function(data) {
-            $('#result').append(data);
+            $('#result').append('<p>' + data + '</p>');
+            var height = document.getElementById('result').scrollHeight - $('#result').height();
+            $('#result').scrollTop(height);
         }).error( function() {
-            $('#result').append("could not reach server");
+            $('#result').append('<p>could not reach server</p>');
+            var height = document.getElementById('result').scrollHeight - $('#result').height();
+            $('#result').scrollTop(height);
         });
         return false; //prevent page reload
     });

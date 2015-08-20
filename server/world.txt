@@ -1,13 +1,13 @@
 ---------S---------
---TTT---TTT---TTT--
+--TTT----T----TTT--
 --TOTTTTTTTTTTTOT--
---TTT--TTTTT--TTT--
+--TTT---TTT---TTT--
 ---T-----T-----T---
 ---T----TTT----T---
 ---TTTTTTMTTTTTT---
 ---T----TTT----T---
 ---T-----T-----T---
---TTT---TTT---TTT--
+--TTT--TTTTT--TTT--
 --TMTTTTTOTTTTTMT--
 --TTT--TTTTT--TTT--
 ---T-----T-----T---
@@ -17,5 +17,5 @@
 ---T-----T-----T---
 --TTT---TTT---TTT--
 --TOTTTTTTTTTTTOT--
---TTT--TTTTT--TTT--
+--TTT----T----TTT--
 ---------S---------

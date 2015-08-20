@@ -50,11 +50,18 @@ function connection_handler($client, $world) {
                         //works
                         //$client->send($world->get_node(0, 0)->get_desc());
 
-                        //
-                        $client->send($world->players[0]->name);
+                        //works
+                        $client->send($world->players[0]->location['x'] . ',' . $world->players[0]->location['y'] );
                         break;
-                    case 'initial_load':
-                        //send world state, and set requesting playerID to last_update now()
+                    case 'init':
+                        //pick random player from pool, set player to active.
+                        //if player inactive for more than 10 seconds, set to inactive again, and respawn their location to base.
+                        //5 players on monsters, 5 on humans.
+
+                        $query = "SELECT * FROM players WHERE active='N'"; //send this to client, set to active
+                        $client->send($world->worldstr);
+                        //
+                        //send world map
                         break;
                     default:
                         $client->send(json_encode(array('error' => 'badly formatted request')));

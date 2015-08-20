@@ -50,12 +50,12 @@ class SuttonQuestRequest {
             return $this->response($this->file);
         }
         if ($this->method == 'GET') {
-            //parse the get request 
+            //parse the get request
             $parts = explode('&', $this->get_query);
             $cmd = explode('=', $parts[0]);
             $body = explode('=', $parts[1]);
 
-            if($cmd[1] == 'update') {
+            if($cmd[1]) {
                 $send = array('cmd' => $cmd[1], 'body' => $body[1]);
                 return $this->response(json_encode($send));
             } else {

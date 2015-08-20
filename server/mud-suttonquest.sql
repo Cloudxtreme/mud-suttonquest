@@ -20,11 +20,25 @@ CREATE TABLE update_queue (
 DROP TABLE IF EXISTS players;
 CREATE TABLE players (
 	playerID INT NOT NULL AUTO_INCREMENT,
-	username VARCHAR(50),
-	password VARCHAR(50),
+	name VARCHAR(50),
+	active VARCHAR(1),
 	last_update DATETIME,
+	locationX INT,
+	locationY INT,
 	CONSTRAINT players_playerID_pk
 		PRIMARY KEY (playerID)
 );
+
+INSERT INTO `suttonquest`.`players` (`playerID`, `name`, `active`, `last_update`, `locationX`, `locationY`) VALUES
+(1, 'Abe', 'N', NULL, 0, 9),
+(2, 'Mario', 'N', NULL, 0, 9),
+(3, 'Leeerooy', 'N', NULL, 0, 9),
+(4, 'Tony Blair', 'N', NULL, 0, 9),
+(5, 'Frankenstein', 'N', NULL, 0, 9),
+(6, 'Danger Mouse', 'N', NULL, 20, 9),
+(7, 'Godzilla', 'N', NULL, 20, 9),
+(8, 'The Mummy', 'N', NULL, 20, 9),
+(9, 'Yoshimitsu', 'N', NULL, 20, 9),
+(10, 'Donkey Kong', 'N', NULL, 20, 9);
 
 ENGINE=InnoDB DEFAULT CHARSET=latin1;

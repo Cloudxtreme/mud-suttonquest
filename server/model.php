@@ -11,6 +11,7 @@ class World
 {
     public $nodes = array();
     public $player = array(); //stores the player location
+    public $worldstr = '';
 
     public function __construct($world_file) {
         //read file
@@ -25,6 +26,7 @@ class World
         while(!feof($world)) {
             $line = fgets($world);
             printf($line);
+            $this->worldstr .= $line;
             //create character array
             $chars = str_split($line);
             foreach($chars as $char) {
@@ -53,6 +55,8 @@ class World
             $x++;
             $y = 0;
         }
+        printf("worldstr:");
+        printf($this->worldstr);
         fclose($world);
     }
 
@@ -127,11 +131,13 @@ class Player
     public $name;
     private $ID;
     private $inventory;
+    public $active;
     public $location = array();
 
     public function __construct() {
         $this->name = "jack";
         $this->ID = 1;
         $this->location = array('x' => 0, 'y' => 0);
+        $this->active = false;
     }
 }

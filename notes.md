@@ -11,12 +11,13 @@ Login system, and assigning player to humans or monsters
 Megabeast + path finding/AI
 Send player world state on load
 Movement Logic
-Fight Logic
+Fight/Capture Logic
 
 client update every second, and client processing for changes
 client json reading (for updates)
 GUI
 player spawns at start point on login (i.e. no persistant location)
+resetting players appropriately, i.e. when logged out for long time
 global cooldowns for players
 
 #ISSUES

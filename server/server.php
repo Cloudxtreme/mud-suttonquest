@@ -1,5 +1,5 @@
 <?php
-function connection_handler($client) {
+function connection_handler($client, $world) {
     $pid = pcntl_fork();
 
     if ($pid == -1) {
@@ -42,9 +42,16 @@ function connection_handler($client) {
                     case 'update':
                         $playerID = $json['body']; //the playerID
                         printf("[+] Updating Client with playerID %d", $playerID);
-                        $query = "SELECT update_type, update_body FROM update_queue INNER JOIN players ON update_queue.playerID = players.playerID WHERE update_queue.playerID='$playerID' AND players.last_update < update_queue.time_queued;";
+                        //$query = "SELECT update_type, update_body FROM update_queue INNER JOIN players ON update_queue.playerID = players.playerID WHERE update_queue.playerID='$playerID' AND players.last_update < update_queue.time_queued;";
+
                         //if successful, update player last update time
-                        $client->send(json_encode($client->query($query)));
+                        //$client->send(json_encode($client->query($query)));
+
+                        //works
+                        //$client->send($world->get_node(0, 0)->get_desc());
+
+                        //
+                        $client->send($world->players[0]->name);
                         break;
                     case 'initial_load':
                         //send world state, and set requesting playerID to last_update now()

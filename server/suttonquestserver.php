@@ -48,10 +48,10 @@ class SuttonQuestServer {
             if (is_array ($this->conn_handler)) {
                 $obj = $this->conn_handler[0];
                 $method = $this->conn_handler[1];
-                $obj->$method($socket_client);
+                $obj->$method($socket_client, $this->world);
             } else {
                 $function = $this->conn_handler;
-                $function($socket_client);
+                $function($socket_client, $this->world);
             }
         }
 

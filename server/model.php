@@ -10,13 +10,17 @@ abstract class Teams
 class World
 {
     public $nodes = array();
-    public $players = array(); //stores the player location
+    public $player = array(); //stores the player location
 
     public function __construct($world_file) {
         //read file
         $world = fopen($world_file, 'r');
         $x = 0;
         $y = 0;
+
+        $player_test = new Player();
+
+        $this->players[] = $player_test;
 
         while(!feof($world)) {
             $line = fgets($world);
@@ -120,8 +124,14 @@ class Spawn extends Node
 
 class Player
 {
-    private $name;
+    public $name;
     private $ID;
     private $inventory;
-    private $location = array();
+    public $location = array();
+
+    public function __construct() {
+        $this->name = "jack";
+        $this->ID = 1;
+        $this->location = array('x' => 0, 'y' => 0);
+    }
 }

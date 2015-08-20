@@ -24,29 +24,20 @@ $(document).ready(function() {
     }).success( function(data) {
         //gets the map string, splits it from newline, then analyses char by char
         var rows = data.split('\n');
-        for (row of rows) {
-            var nodes = row.split('');
-            for (node of nodes) {
-
-                switch(node) {
-                    case 'T':
-                        $('#map').append('<div class="node"></div>');
-                        break;
-                    case '-':
-                        $('#map').append('<div class="node"></div>');
-                        break;
-                    case 'M':
-                        $('#map').append('<div class="node"></div>');
-                        break;
-                    case 'O':
-                        $('#map').append('<div class="node"></div>');
-                        break;
-                    case 'S':
-                        $('#map').append('<div class="node"></div>');
-                        break;
+        for (var i = 0; i < rows.length; i++) {
+            var nodes = rows[i].split('');
+            for (var j = 0; j < nodes.length; j++) {
+                //var temp = '<div class="node" id="' + 1 +'"></div>');
+                var nodetype = '';
+                switch(nodes[j]) {
+                    case 'T': nodetype = 'room'; break;
+                    case '-': nodetype = 'opaque';break;
+                    case 'M': nodetype = 'megabeast-spawn';break;
+                    case 'O': nodetype = 'objective';break;
+                    case 'S': nodetype = 'spawn'; break;
                 }
+                $('<div class="node"></div>').addClass(nodetype).css({top: 40 * i, left: 40 * j}).appendTo('#map');
             }
-            //$('#result').append('<p>' + level + '</p>');
         }
     }).error( function() {
         $('#result').append("could not reach server");

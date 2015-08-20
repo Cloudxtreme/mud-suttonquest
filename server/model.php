@@ -10,6 +10,8 @@ abstract class Teams
 class World
 {
     public $nodes = array();
+    public $players = array(); //stores the player location
+
     public function __construct($world_file) {
         //read file
         $world = fopen($world_file, 'r');
@@ -109,20 +111,17 @@ class Objective extends Node
 //megabeast/player spawn nodes
 class Spawn extends Node
 {
-    //
+    private $team;
+
     public function __construct($type) {
         parent::__construct($type, true);
     }
 }
 
-class Item
-{
-    private $name;
-    private $description;
-}
-
 class Player
 {
     private $name;
+    private $ID;
     private $inventory;
+    private $location = array();
 }

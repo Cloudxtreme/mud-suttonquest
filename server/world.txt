@@ -1,6 +1,6 @@
 ---------S---------
 --TTT---TTT---TTT--
---TNTTTTTTTTTTTNT--
+--TOTTTTTTTTTTTOT--
 --TTT--TTTTT--TTT--
 ---T-----T-----T---
 ---T----TTT----T---
@@ -8,7 +8,7 @@
 ---T----TTT----T---
 ---T-----T-----T---
 --TTT---TTT---TTT--
---TMTTTTTNTTTTTMT--
+--TMTTTTTOTTTTTMT--
 --TTT--TTTTT--TTT--
 ---T-----T-----T---
 ---T----TTT----T---
@@ -16,6 +16,6 @@
 ---T----TTT----T---
 ---T-----T-----T---
 --TTT---TTT---TTT--
---TNTTTTTTTTTTTNT--
+--TOTTTTTTTTTTTOT--
 --TTT--TTTTT--TTT--
 ---------S---------

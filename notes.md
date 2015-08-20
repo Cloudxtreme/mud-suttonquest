@@ -6,7 +6,7 @@
 +Classes for World, Place/Room, Items?, Player, Action/Command?, Task?
 
 #TO-DO
-World Logic, storing rooms in memory (and reading from world file).
+-World Logic, storing rooms in memory (and reading from world file).
 Login system, and assigning player to humans or monsters
 Megabeast + path finding/AI
 Send player world state on load

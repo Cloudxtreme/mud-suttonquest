@@ -9,7 +9,7 @@ abstract class Teams
 
 class World
 {
-    public $rooms = array();
+    public $nodes = array();
     public function __construct($world_file) {
         //read file
         $world = fopen($world_file, 'r');
@@ -24,16 +24,19 @@ class World
             foreach($chars as $char) {
                 switch($char) {
                     case 'T':
-                        $this->rooms[$x][$y] = new Room($char, true);
+                        $this->nodes[$x][$y] = new Room('Transparent Room', true);
                         break;
                     case '-':
-                        $this->rooms[$x][$y] = new Room($char, true);
+                        $this->nodes[$x][$y] = new Node('Opaque Room', false);
                         break;
                     case 'M':
-                        $this->rooms[$x][$y] = new Room($char, true);
+                        $this->nodes[$x][$y] = new Spawn('Megabeast Spawn', true);
+                        break;
+                    case 'O':
+                        $this->nodes[$x][$y] = new Objective('Capturable Objective', true);
                         break;
                     case 'S':
-                        $this->rooms[$x][$y] = new Room($char, true);
+                        $this->nodes[$x][$y] = new Spawn('Player Spawn', true);
                         break;
                     default:
                         break;
@@ -47,19 +50,17 @@ class World
         fclose($world);
     }
 
-    public function get_room($x, $y) {
-        return $this->rooms[$x][$y];
+    public function get_node($x, $y) {
+        return $this->nodes[$x][$y];
     }
 }
 
-class Room
+//world location/node
+class Node
 {
-    private $transparent;
+    protected $transparent;
     protected $description;
     protected $type;
-    protected $contents;
-    protected $team;
-    private $is_spawn;
 
     //pick from a list of random descriptions here
     public function __construct($_type, $_transparent)
@@ -83,13 +84,34 @@ class Room
     }
 }
 
-class Node extends Room
+//transparent rooms
+class Room extends Node
 {
+    private $contents = array();
+
+    public function __construct($type) {
+        parent::__construct($type, true);
+    }
+}
+
+//capturable objectives
+class Objective extends Node
+{
+    private $team;
     private $hp;
     private $power;
 
-    public function __construct() {
-        parent::__construct(true);
+    public function __construct($type) {
+        parent::__construct($type, true);
+    }
+}
+
+//megabeast/player spawn nodes
+class Spawn extends Node
+{
+    //
+    public function __construct($type) {
+        parent::__construct($type, true);
     }
 }
 
@@ -103,10 +125,4 @@ class Player
 {
     private $name;
     private $inventory;
-}
-
-class inventory
-{
-    private $items;
-
 }

@@ -10,19 +10,14 @@ function connection_handler($client, $world) {
     }
 
     $read = '';
-
     printf("[+] Client Connected\n");
-    //printf("[+] Client %s connected at port %d", $client->get_address(), $client->get_port());
 
     while (true) {
         $read = $client->read();
         if($read != '') {
             //parse the json here, and do something with it.
             $json = json_decode($read, true);
-            if(!is_array($json)) {
-                //bad message
-                break;
-            } else {
+            if(is_array($json)) {
                 switch($json['cmd']) {
                     case 'say':
                         //add to queue
@@ -49,9 +44,8 @@ function connection_handler($client, $world) {
 
                         //works
                         //$client->send($world->get_node(0, 0)->get_desc());
-
                         //works
-                        $client->send($world->players[0]->location['x'] . ',' . $world->players[0]->location['y'] );
+                        //$client->send($world->players[0]->location['x'] . ',' . $world->players[0]->location['y'] );
                         break;
                     case 'init':
                         //pick random player from pool, set player to active.
@@ -59,28 +53,23 @@ function connection_handler($client, $world) {
                         //5 players on monsters, 5 on humans.
 
                         $query = "SELECT * FROM players WHERE active='N'"; //send this to client, set to active
-                        $client->send($world->worldstr);
-                        //
-                        //send world map
+                        $client->send($world->get_worldstr());
                         break;
                     default:
                         $client->send(json_encode(array('error' => 'badly formatted request')));
                         break;
                 }
+            } else {
+                $client->send(json_encode(array('error' => 'badly formatted request')));
+                break;
             }
-
         } else {
             break;
         }
-        /*
-        if(preg_replace('/[^a-z]/', '', $read) == 'exit') {
-            break;
-        }*/
         if ($read === null) {
             printf("[-] Client Disconnected\n");
             return false;
         } else {
-            //received from client
             printf("[+] Received: %s\n", $read);
         }
     }

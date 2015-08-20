@@ -9,9 +9,9 @@ abstract class Teams
 
 class World
 {
-    public $nodes = array();
-    public $player = array(); //stores the player location
-    public $worldstr = '';
+    private $nodes = array();
+    private $player = array(); //stores the player location
+    private $worldstr = '';
 
     public function __construct($world_file) {
         //read file
@@ -19,8 +19,7 @@ class World
         $x = 0;
         $y = 0;
 
-        $player_test = new Player();
-
+        $player_test = new Player('Jack', 1, 0, 9);
         $this->players[] = $player_test;
 
         while(!feof($world)) {
@@ -62,6 +61,14 @@ class World
 
     public function get_node($x, $y) {
         return $this->nodes[$x][$y];
+    }
+
+    public function get_worldstr() {
+        return $this->worldstr;
+    }
+
+    public function get_player($id) {
+        return $this->players[$id];
     }
 }
 
@@ -126,18 +133,61 @@ class Spawn extends Node
     }
 }
 
-class Player
-{
-    public $name;
-    private $ID;
-    private $inventory;
-    public $active;
-    public $location = array();
+class Creature {
+    protected $hp;
+    protected $name;
+    protected $location = array();
 
-    public function __construct() {
-        $this->name = "jack";
-        $this->ID = 1;
-        $this->location = array('x' => 0, 'y' => 0);
+    public function __construct($_name, $_x, $_y) {
+        $this->name = $_name;
+        $this->location = array('x' => $_x, 'y' => $_y);
+    }
+
+    public function get_location() {
+        return $this->location;
+    }
+
+    public function set_location($_x, $_y) {
+        $this->location['x'] = $_x;
+        $this->location['y'] = $_y;
+    }
+
+    public function get_name() {
+        return $this->name;
+    }
+
+    public function get_hp() {
+        return $this->hp;
+    }
+
+}
+/*
+class Megabeast {
+    public function __construct($_name, $_id, $_x, $_y) {
+        parent::__construct($_name, $_x, $_y);
+    }
+}*/
+
+class Player extends Creature
+{
+    private $id;
+    private $active;
+
+    public function __construct($_name, $_id, $_x, $_y) {
+        parent::__construct($_name, $_x, $_y);
+        $this->id = $_id;
         $this->active = false;
+    }
+
+    public function get_id() {
+        return $this->id;
+    }
+
+    public function is_active() {
+        return $this->active;
+    }
+
+    public function set_active($_active) {
+        $this->active = $_active;
     }
 }

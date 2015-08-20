@@ -34,14 +34,10 @@ class SuttonQuestServer {
         $this->_listen = true;
 
         printf("Server started, listening on port %d", $this->port);
-        printf("testing: %s", $this->world->get_node(0, 9)->get_type());
 
         //listening loop
         while($this->_listen) {
             //add some error checking
-            //send world state here in connection handler.
-            //perform updates here too?
-
             $client = socket_accept($this->socket_server);
             $socket_client = new SuttonQuestClient($client);
 

@@ -47,15 +47,19 @@ function connection_handler($client, $world) {
                             case 'east': $locationX--; break;
                         }
 
-                        $query = "UPDATE players SET locationX='$locationX', locationY='$locationY' WHERE playerID='$playerID';";
-                        $send = $client->insert($query);
-                        if($send) {
-                            //add to the update_queue
-                            $locationstr = $locationX . ',' . $locationY;
-                            $move_query = "INSERT INTO update_queue (updateID, playerID, time_queued, update_type, update_body) VALUES (NULL, '$playerID', NOW(), '$cmd', '$locationstr');";
-                            $client->insert($move_query);
+                        //check if we can move
+                        if($world->get_node($locationX, $locationY)->get_type() != 'Opaque Room') {
+                            //move is valid, continue
+                            $query = "UPDATE players SET locationX='$locationX', locationY='$locationY' WHERE playerID='$playerID';";
+                            $send = $client->insert($query);
+                            if($send) {
+                                //add to the update_queue
+                                $locationstr = $locationX . ',' . $locationY;
+                                $move_query = "INSERT INTO update_queue (updateID, playerID, time_queued, update_type, update_body) VALUES (NULL, '$playerID', NOW(), '$cmd', '$locationstr');";
+                                $client->insert($move_query);
+                            }
                         } else {
-                            $client->send('[' . date('Y-m-d H:i:s') . '][' . $player_name . ']: ' . 'failed to move, check if valid');
+                            $client->send('[' . date('Y-m-d H:i:s') . ']: failed to move, check if valid');
                         }
                         break;
                     case 'update':

@@ -104,6 +104,7 @@ $(document).ready(function() {
 
         //split up string after first space, i.e. <command> <command of body>
         var input = $('#command').val();
+        $('#scommand').val(''); // clear command
         var command = input.substr(0, input.indexOf(' '));
         var cmd_body = input.substr(input.indexOf(' ') + 1);
 

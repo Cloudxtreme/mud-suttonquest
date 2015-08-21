@@ -56,15 +56,18 @@ function connection_handler($client, $world) {
                             $send = $client->insert($query);
                             if($send) {
                                 //add to the update_queue
-                                $locationstr = $locationX . ',' . $locationY;
-                                $move_query = "INSERT INTO update_queue (updateID, playerID, time_queued, update_type, update_body) VALUES (NULL, '$playerID', NOW(), '$cmd', '$locationstr');";
-                                $client->insert($move_query);
+
+                                //get other players occupying the same room
+                                $query_room = "SELECT * FROM players WHERE locationX='$locationX' AND locationY='$locationY' AND playerID != '$playerID'";
+
+                                $players_in_room = $client->query($query_room);
 
                                 //return to client success, with description of room + any occupants?
-                                $client->send(json_encode(array('msg' => 'success', 'desc' => $node->get_desc())));
+                                $client->send(json_encode(array('msg' => 'success', 'desc' => $node->get_desc(), 'locationX' => $locationX, 'locationY' => $locationY, 'others' => $players_in_room)));
                             }
                         } else {
-                            $client->send('[' . date('Y-m-d H:i:s') . ']: failed to move, check if valid');
+                            $errormsg = '[' . date('Y-m-d H:i:s') . ']: failed to move, check if valid';
+                            $client->send(json_encode(array('msg' => 'error', 'desc' => $errormsg)));
                         }
                         break;
                     case 'update':

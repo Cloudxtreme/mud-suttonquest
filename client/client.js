@@ -18,8 +18,7 @@ $(document).ready(function() {
             dataType: 'json',
             contentType: 'application/json'
         }).success( function(data) {
-            if(data && data != null) {
-                //writeToChat(data);
+            if(data) {
                 console.log(data);
                 var json = JSON.parse(data);
                 console.log(json['update_type']);
@@ -27,16 +26,6 @@ $(document).ready(function() {
                 $.each(json, function(index, update) {
                     if(update.update_type == "say") {
                         writeToChat('[' + update.time_queued +']' + ':[' + update.name + ']: ' + update.update_body);
-                    }
-                    if(update.update_type == "move") {
-                        if(update.playerID == playerID) {
-                            //set location in GUI
-                            var coords = update.update_body.split(',');
-                            world_grid[playerX][playerY].removeClass("current-location");
-                            playerX = coords[0];
-                            playerY = coords[1];
-                            world_grid[playerX][playerY].addClass("current-location");
-                        }
                     }
                 });
             } else {
@@ -56,7 +45,7 @@ $(document).ready(function() {
         dataType: 'json',
         contentType: 'application/json'
     }).success( function(data) {
-        if(data && data != null) {
+        if(data) {
             console.log(data);
             var json = JSON.parse(data);
 
@@ -122,7 +111,24 @@ $(document).ready(function() {
             }),
             contentType: "application/json"
         }).success( function(data) {
-            writeToChat(data);
+            if(data) {
+                console.log(json);
+                var json = JSON.parse(data);
+                if(json.msg == 'success') {
+                    writeToChat(json.desc);
+                    world_grid[playerX][playerY].removeClass("current-location");
+                    playerX = json.locationX;
+                    playerY = json.locationY;
+                    $.each(json.others, function(index, player) {
+                        writeToChat(player.name);
+                    });
+                    world_grid[playerX][playerY].addClass("current-location");
+
+                }
+                if(json.msg == 'error') {
+                    writeToChat(json.desc);
+                }
+            }
         }).error( function() {
             writeToChat("Could not connect to server, please refresh the page to try again.");
         });

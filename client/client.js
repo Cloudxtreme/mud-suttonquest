@@ -21,8 +21,11 @@ $(document).ready(function() {
         dataType: 'json',
         contentType: 'application/json'
     }).success( function(data) {
+        console.log(data);
+        var json = JSON.parse(data);
         //gets the map string, splits it from newline, then analyses char by char
-        var rows = data.split('\n');
+        var rows = json['worldstr'].split('\n');
+        console.log("playerID" + json['playerID']);
         for (var i = 0; i < rows.length; i++) {
             var nodes = rows[i].split('');
             for (var j = 0; j < nodes.length; j++) {

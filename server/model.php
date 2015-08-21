@@ -10,51 +10,38 @@ abstract class Teams
 class World
 {
     private $nodes = array();
-    private $player = array(); //stores the player location
+    private $players = array(); //stores the player location
     private $worldstr = '';
 
     public function __construct($world_file) {
         //read file
         $world = fopen($world_file, 'r');
-        $x = 0;
-        $y = 0;
+        $x = 0; $y = 0;
 
-        $player_test = new Player('Jack', 1, 0, 9);
-        $this->players[] = $player_test;
-
+        //world gen
         while(!feof($world)) {
             $line = fgets($world);
-            printf($line);
             $this->worldstr .= $line;
-            //create character array
-            $chars = str_split($line);
+            $chars = str_split($line); //create character array
             foreach($chars as $char) {
                 switch($char) {
-                    case 'T':
-                        $this->nodes[$x][$y] = new Room('Transparent Room', true);
-                        break;
-                    case '-':
-                        $this->nodes[$x][$y] = new Node('Opaque Room', false);
-                        break;
-                    case 'M':
-                        $this->nodes[$x][$y] = new Spawn('Megabeast Spawn', true);
-                        break;
-                    case 'O':
-                        $this->nodes[$x][$y] = new Objective('Capturable Objective', true);
-                        break;
-                    case 'S':
-                        $this->nodes[$x][$y] = new Spawn('Player Spawn', true);
-                        break;
-                    default:
-                        break;
+                    case 'T': $this->nodes[$x][$y] = new Room('Transparent Room', true); break;
+                    case '-': $this->nodes[$x][$y] = new Node('Opaque Room', false); break;
+                    case 'M': $this->nodes[$x][$y] = new Spawn('Megabeast Spawn', true); break;
+                    case 'O': $this->nodes[$x][$y] = new Objective('Capturable Objective', true); break;
+                    case 'S': $this->nodes[$x][$y] = new Spawn('Player Spawn', true); break;
+                    default: break;
                 }
                 $y++;
             }
-            //increment x and reset y
             $x++;
             $y = 0;
         }
-        printf("worldstr:");
+
+        //update players
+        $this->update_players();
+
+        //write players to DB?
         printf($this->worldstr);
         fclose($world);
     }
@@ -69,6 +56,34 @@ class World
 
     public function get_player($id) {
         return $this->players[$id];
+    }
+
+    //read players from DB
+    public function update_players() {
+        $this->_dbcon = mysqli_connect("localhost","suttonquest","Xzrr71^1","suttonquest");
+        $query = "SELECT * FROM players WHERE active='N'";
+        if (mysqli_connect_errno()) {
+			printf("Failed to connect to MySQL: " . mysqli_connect_error());
+		}
+        if ($result = mysqli_query($this->_dbcon, $query))
+		{
+			$tempArray = array();
+			//loop through each row in the result set
+			while($row = $result->fetch_object())
+			{
+                $temp = new Player($row->name, $row->playerID, $row->locationX, $row->locationY);
+                if($row->active == 'Y') {
+                    $temp->set_active(true);
+                } else {
+                    $temp->set_active(false);
+                }
+                array_push($this->players, $temp);
+			}
+            //print_r($tempArray[0]->playerID);
+            print_r($this->players);
+		} else {
+            printf("Failed to initialise players");
+        }
     }
 }
 
@@ -159,7 +174,6 @@ class Creature {
     public function get_hp() {
         return $this->hp;
     }
-
 }
 /*
 class Megabeast {

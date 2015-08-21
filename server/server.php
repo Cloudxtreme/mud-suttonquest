@@ -53,7 +53,8 @@ function connection_handler($client, $world) {
                         //5 players on monsters, 5 on humans.
 
                         $query = "SELECT * FROM players WHERE active='N'"; //send this to client, set to active
-                        $client->send($world->get_worldstr());
+                        $reply = array('worldstr' => $world->get_worldstr(), 'playerID' => 1);
+                        $client->send(json_encode($reply));
                         break;
                     default:
                         $client->send(json_encode(array('error' => 'badly formatted request')));

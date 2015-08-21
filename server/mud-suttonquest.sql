@@ -31,8 +31,8 @@ CREATE TABLE players (
 
 INSERT INTO `suttonquest`.`players` (`playerID`, `name`, `active`, `last_update`, `locationX`, `locationY`) VALUES
 (1, 'Abe', 'N', NULL, 0, 9),
-(2, 'Mario', 'N', NULL, 0, 9),
-(3, 'Leeerooy', 'N', NULL, 0, 9),
+(2, 'Dr. Mario', 'N', NULL, 0, 9),
+(3, 'Ronald McDonald', 'N', NULL, 0, 9),
 (4, 'Tony Blair', 'N', NULL, 0, 9),
 (5, 'Frankenstein', 'N', NULL, 0, 9),
 (6, 'Danger Mouse', 'N', NULL, 20, 9),

@@ -125,10 +125,10 @@ $(document).ready(function() {
                             if(!(index == json.others.length - 1)) {
                                 others += '<b>' + player.name + '</b>, ';
                             } else {
-                                others += 'and <b>' + player.name + '</b>. ';
+                                others += 'and <b>' + player.name + '</b>.';
                             }
                         });
-                        others += 'They don\'t look pleased to see you.';
+                        others += ' They don\'t look pleased to see you.';
                         writeToChat(others);
                     }
                     world_grid[playerX][playerY].addClass("current-location");

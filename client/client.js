@@ -28,6 +28,16 @@ $(document).ready(function() {
                     if(update.update_type == "say") {
                         writeToChat('[' + update.time_queued +']' + ':[' + update.name + ']: ' + update.update_body);
                     }
+                    if(update.update_type == "move") {
+                        if(update.playerID == playerID) {
+                            //set location in GUI
+                            var coords = update.update_body.split(',');
+                            world_grid[playerX][playerY].removeClass("current-location");
+                            playerX = coords[0];
+                            playerY = coords[1];
+                            world_grid[playerX][playerY].addClass("current-location");
+                        }
+                    }
                 });
             } else {
                 clearInterval(interval);
@@ -74,7 +84,7 @@ $(document).ready(function() {
                         case 'S': nodetype = 'spawn'; break;
                     }
                     world_grid[i][j] = $('<div class="node"></div>');
-                    world_grid[i][j].addClass(nodetype).css({top: 35 * i, left: 35 * j}).appendTo('#map');
+                    world_grid[i][j].addClass(nodetype).css({top: 30 * i, left: 30 * j}).appendTo('#map');
                 }
             }
             //set location in GUI
@@ -105,7 +115,9 @@ $(document).ready(function() {
 	            cmd: command,
                 body: cmd_body,
                 playerID: playerID,
-                player_name: playerName
+                player_name: playerName,
+                locationX: playerX,
+                locationY: playerY
             }),
             contentType: "application/json"
         }).success( function(data) {

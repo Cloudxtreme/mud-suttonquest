@@ -20,6 +20,7 @@
         #submit-button {width: 15%; float: left;}
         #chat-log {height: 150px; overflow: scroll;}
         #chat-log::-webkit-scrollbar {display: none;}
+        #map {margin-top: 50px;}
         .bs-example:after {content: "Chat Window";}
         .highlight {height: 64px;}
         .node {width: 25px;height: 25px;position: absolute;background-color: #660000;}
@@ -28,6 +29,9 @@
         .megabeast-spawn {background-color: #990099;}
         .objective {background-color: #CC9900;}
         p {margin: 0; font-size: 13px;}
+
+        @keyframes pulse { 50% { background-color: #fff }}
+        .current-location {animation: pulse 1s infinite;}
     </style>
 </head>
 <body>

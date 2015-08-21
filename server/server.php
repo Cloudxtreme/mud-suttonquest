@@ -24,17 +24,39 @@ function connection_handler($client, $world) {
                         $cmd = $json['cmd'];
                         $body = $json['body'];
                         $playerID = $json['playerID'];
-                        $player_name = $json['player_name'];
                         $query = "INSERT INTO update_queue (updateID, playerID, time_queued, update_type, update_body) VALUES (NULL, '$playerID', NOW(), '$cmd', '$body');";
                         $send = $client->insert($query);
                         if($send) {
                             //$client->send('[' . date('Y-m-d H:i:s') . '][' . $player_name . ']: ' . $body);
                         } else {
-                            $client->send('[' . date('Y-m-d H:i:s') . '][' . $player_name . ']: ' . 'message send failure');
+                            $client->send('[' . date('Y-m-d H:i:s') . ']' . 'message send failure');
                         }
                         break;
                     case 'move':
-                        $client->send('[' . date('g:i a') . ']: ' . $json['body']);
+                        //adds the message to the update queue
+                        $cmd = $json['cmd'];
+                        $body = $json['body'];
+                        $playerID = $json['playerID'];
+                        $locationX = $json['locationX'];
+                        $locationY = $json['locationY'];
+
+                        switch($body) {
+                            case 'north': $locationX--; break;
+                            case 'south': $locationX++; break;
+                            case 'west': $locationY--; break;
+                            case 'east': $locationX--; break;
+                        }
+
+                        $query = "UPDATE players SET locationX='$locationX', locationY='$locationY' WHERE playerID='$playerID';";
+                        $send = $client->insert($query);
+                        if($send) {
+                            //add to the update_queue
+                            $locationstr = $locationX . ',' . $locationY;
+                            $move_query = "INSERT INTO update_queue (updateID, playerID, time_queued, update_type, update_body) VALUES (NULL, '$playerID', NOW(), '$cmd', '$locationstr');";
+                            $client->insert($move_query);
+                        } else {
+                            $client->send('[' . date('Y-m-d H:i:s') . '][' . $player_name . ']: ' . 'failed to move, check if valid');
+                        }
                         break;
                     case 'update':
                         $playerID = $json['body']; //the playerID
@@ -60,7 +82,10 @@ function connection_handler($client, $world) {
                         $player_list = $client->query($query);
                         $playerID = rand(0, count($player_list) - 1);
                         $selected = $player_list[$playerID];
-                        //update player to active
+
+                        //update player to active, and set last_update
+                        $update_query = "UPDATE players SET last_update=NOW() WHERE playerID='$playerID'";
+                        $client->insert($update_query);
 
                         //send to client
                         $welcome_message = 'Welcome to Sutton Quest [' . $selected->name . ']. You awaken to the noise of a man rushing past, brandishing a large fly swatter, yelling "We can\'t stop here, this is bat country!".';

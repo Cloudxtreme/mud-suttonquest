@@ -20,6 +20,10 @@ class SuttonQuestClient {
 		}
     }
 
+    public function __destruct() {
+        mysqli_close($this->_dbcon);
+    }
+
     public function close() {
         socket_shutdown($this->_connection);
         socket_close($this->_connection);

@@ -114,16 +114,27 @@ $(document).ready(function() {
             if(data) {
                 console.log(json);
                 var json = JSON.parse(data);
-                if(json.msg == 'success') {
+                if(json.msg == 'move-success') {
                     writeToChat(json.desc);
                     world_grid[playerX][playerY].removeClass("current-location");
                     playerX = json.locationX;
                     playerY = json.locationY;
-                    $.each(json.others, function(index, player) {
-                        writeToChat(player.name);
-                    });
+                    if(json.others.length > 0) {
+                        var others = 'Looking around the room, you see the following individuals, ';
+                        $.each(json.others, function(index, player) {
+                            if(!(index == json.others.length - 1)) {
+                                others += '<b>' + player.name + '</b>, ';
+                            } else {
+                                others += 'and <b>' + player.name + '</b>. ';
+                            }
+                        });
+                        others += 'They don\'t look pleased to see you.';
+                        writeToChat(others);
+                    }
                     world_grid[playerX][playerY].addClass("current-location");
-
+                }
+                if(json.msg == 'say-success') {
+                    writeToChat(json.desc);
                 }
                 if(json.msg == 'error') {
                     writeToChat(json.desc);

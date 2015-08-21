@@ -20,16 +20,19 @@ function connection_handler($client, $world) {
             if(is_array($json)) {
                 switch($json['cmd']) {
                     case 'say':
-                        //adds the message to the update queue
+                        //adds the message to the update queue, and returns success message to the client
                         $cmd = $json['cmd'];
                         $body = $json['body'];
                         $playerID = $json['playerID'];
+                        $player_name = $json['player_name'];
                         $query = "INSERT INTO update_queue (updateID, playerID, time_queued, update_type, update_body) VALUES (NULL, '$playerID', NOW(), '$cmd', '$body');";
                         $send = $client->insert($query);
                         if($send) {
-                            //$client->send('[' . date('Y-m-d H:i:s') . '][' . $player_name . ']: ' . $body);
+                            $msg = '[' . date('Y-m-d H:i:s') . ']:[' . $player_name . ']:' . $body;
+                            $client->send(json_encode(array('msg' => 'say-success', 'desc' => $msg)));
                         } else {
-                            $client->send('[' . date('Y-m-d H:i:s') . ']' . 'message send failure');
+                            $errormsg = '[' . date('Y-m-d H:i:s') . ']: failed to send message';
+                            $client->send(json_encode(array('msg' => 'error', 'desc' => $errormsg)));
                         }
                         break;
                     case 'move':
@@ -63,7 +66,7 @@ function connection_handler($client, $world) {
                                 $players_in_room = $client->query($query_room);
 
                                 //return to client success, with description of room + any occupants?
-                                $client->send(json_encode(array('msg' => 'success', 'desc' => $node->get_desc(), 'locationX' => $locationX, 'locationY' => $locationY, 'others' => $players_in_room)));
+                                $client->send(json_encode(array('msg' => 'move-success', 'desc' => $node->get_desc(), 'locationX' => $locationX, 'locationY' => $locationY, 'others' => $players_in_room)));
                             }
                         } else {
                             $errormsg = '[' . date('Y-m-d H:i:s') . ']: failed to move, check if valid';
@@ -75,7 +78,7 @@ function connection_handler($client, $world) {
                         printf("[+] Updating Client with playerID %d\n", $playerID);
 
                         //gets a list of updates for a player, works by comparing the requesting players last update time, and returns all new updates since that time
-                        $query = "SELECT a.last_update, time_queued, update_type, update_body, players.playerID, name FROM update_queue INNER JOIN players ON players.playerID=update_queue.playerID INNER JOIN (SELECT last_update, playerID FROM players WHERE playerID='$playerID') AS a ON a.playerID WHERE a.last_update < update_queue.time_queued;";
+                        $query = "SELECT a.last_update, time_queued, update_type, update_body, players.playerID, name FROM update_queue INNER JOIN players ON players.playerID=update_queue.playerID INNER JOIN (SELECT last_update, playerID FROM players WHERE playerID='$playerID') AS a ON a.playerID WHERE a.last_update < update_queue.time_queued AND update_queue.playerID !='$playerID';";
 
                         //send updates to the client
                         $client->send(json_encode($client->query($query)));

@@ -4,22 +4,25 @@ $(document).ready(function() {
     var playerX;
     var playerY;
     var world_grid = [];
+
     //get updates every second
-    /*
-    setInterval(function() {
-        $.ajax({
-            method: 'GET',
-            url: 'request.php?cmd=update&playerid=1',
-            dataType: 'json',
-            contentType: 'application/json'
-        }).success( function(data) {
-            writeToChat(data);
-        }).error( function() {
-            writeToChat("could not reach server");
-        });
-    }, 1000);
-    */
-    
+    function start() {
+        setInterval(function() {
+            $.ajax({
+                method: 'GET',
+                url: 'request.php?cmd=update&playerid=' + playerID,
+                dataType: 'json',
+                contentType: 'application/json'
+            }).success( function(data) {
+                if(data) {
+                    writeToChat(data);
+                }
+            }).error( function() {
+                writeToChat("could not reach server");
+            });
+        }, 1000);
+    }
+
     //perform initial load
     $.ajax({
         method: 'GET',
@@ -27,41 +30,47 @@ $(document).ready(function() {
         dataType: 'json',
         contentType: 'application/json'
     }).success( function(data) {
-        console.log(data);
-        var json = JSON.parse(data);
+        if(data) {
+            console.log(data);
+            var json = JSON.parse(data);
 
-        //setup our player data, and welcome message
-        console.log("playerID" + json['playerID']);
-        playerID = json['playerID'];
-        playerName = json['player_name'];
-        playerX = json['locationX'];
-        playerY = json['locationY'];
-        writeToChat(json['welcome_message']);
+            //setup our player data, and welcome message
+            console.log("playerID" + json['playerID']);
+            playerID = json['playerID'];
+            playerName = json['player_name'];
+            playerX = json['locationX'];
+            playerY = json['locationY'];
+            writeToChat(json['welcome_message']);
 
-        //generate map
-        var rows = json['worldstr'].split('\n');
-        for (var i = 0; i < rows.length; i++) {
-            var nodes = rows[i].split('');
-            world_grid[i] = [];
-            for (var j = 0; j < nodes.length; j++) {
-                //var temp = '<div class="node" id="' + 1 +'"></div>');
-                var nodetype = '';
-                switch(nodes[j]) {
-                    case 'T': nodetype = 'room'; break;
-                    case '-': nodetype = 'opaque'; break;
-                    case 'M': nodetype = 'megabeast-spawn'; break;
-                    case 'O': nodetype = 'objective'; break;
-                    case 'S': nodetype = 'spawn'; break;
+            //generate map
+            var rows = json['worldstr'].split('\n');
+            for (var i = 0; i < rows.length; i++) {
+                var nodes = rows[i].split('');
+                world_grid[i] = [];
+                for (var j = 0; j < nodes.length; j++) {
+                    //var temp = '<div class="node" id="' + 1 +'"></div>');
+                    var nodetype = '';
+                    switch(nodes[j]) {
+                        case 'T': nodetype = 'room'; break;
+                        case '-': nodetype = 'opaque'; break;
+                        case 'M': nodetype = 'megabeast-spawn'; break;
+                        case 'O': nodetype = 'objective'; break;
+                        case 'S': nodetype = 'spawn'; break;
+                    }
+                    world_grid[i][j] = $('<div class="node"></div>');
+                    world_grid[i][j].addClass(nodetype).css({top: 35 * i, left: 35 * j}).appendTo('#map');
                 }
-                world_grid[i][j] = $('<div class="node"></div>');
-                world_grid[i][j].addClass(nodetype).css({top: 35 * i, left: 35 * j}).appendTo('#map');
             }
-        }
+            //set location in GUI
+            world_grid[playerX][playerY].addClass("current-location");
 
-        //set location in GUI
-        world_grid[playerX][playerY].addClass("current-location");
+            //start the updates
+            start();
+        } else {
+            writeToChat("Could not connect to server");
+        }
     }).error( function() {
-        $('#chat-log').append("could not reach server");
+        writeToChat("Could not connect to server");
     });
 
     $('#submit-button').click( function(e) {

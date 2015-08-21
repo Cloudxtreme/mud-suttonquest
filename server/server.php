@@ -44,11 +44,13 @@ function connection_handler($client, $world) {
                             case 'north': $locationX--; break;
                             case 'south': $locationX++; break;
                             case 'west': $locationY--; break;
-                            case 'east': $locationX--; break;
+                            case 'east': $locationY++; break;
                         }
 
+                        $node = $world->get_node($locationX, $locationY);
+
                         //check if we can move
-                        if($world->get_node($locationX, $locationY)->get_type() != 'Opaque Room') {
+                        if($node->get_type() != 'Opaque Room') {
                             //move is valid, continue
                             $query = "UPDATE players SET locationX='$locationX', locationY='$locationY' WHERE playerID='$playerID';";
                             $send = $client->insert($query);
@@ -57,6 +59,9 @@ function connection_handler($client, $world) {
                                 $locationstr = $locationX . ',' . $locationY;
                                 $move_query = "INSERT INTO update_queue (updateID, playerID, time_queued, update_type, update_body) VALUES (NULL, '$playerID', NOW(), '$cmd', '$locationstr');";
                                 $client->insert($move_query);
+
+                                //return to client success, with description of room + any occupants?
+                                $client->send(json_encode(array('msg' => 'success', 'desc' => $node->get_desc())));
                             }
                         } else {
                             $client->send('[' . date('Y-m-d H:i:s') . ']: failed to move, check if valid');

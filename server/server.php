@@ -23,12 +23,14 @@ function connection_handler($client, $world) {
                         //add to queue
                         $cmd = $json['cmd'];
                         $body = $json['body'];
-                        $query = "INSERT INTO update_queue (updateID, playerID, time_queued, update_type, update_body) VALUES (NULL, 1, NOW(), '$cmd', '$body');";
+                        $playerID = $json['playerID'];
+                        $player_name = $json['player_name'];
+                        $query = "INSERT INTO update_queue (updateID, playerID, time_queued, update_type, update_body) VALUES (NULL, '$playerID', NOW(), '$cmd', '$body');";
                         $send = $client->insert($query);
                         if($send) {
-                            $client->send('[' . date('g:i a') . ']: ' . 'message success');
+                            $client->send('[' . date('g:i a') . '][' . $player_name . ']: ' . $body);
                         } else {
-                            $client->send('[' . date('g:i a') . ']: ' . 'message failure');
+                            $client->send('[' . date('g:i a') . '][' . $player_name . ']: ' . 'message send failure');
                         }
                         break;
                     case 'move':
@@ -50,10 +52,18 @@ function connection_handler($client, $world) {
                     case 'init':
                         //pick random player from pool, set player to active.
                         //if player inactive for more than 10 seconds, set to inactive again, and respawn their location to base.
-                        //5 players on monsters, 5 on humans.
+                        //5 players on monsters, 5 on humans
 
-                        $query = "SELECT * FROM players WHERE active='N'"; //send this to client, set to active
-                        $reply = array('worldstr' => $world->get_worldstr(), 'playerID' => 1);
+                        //find an unactive player
+                        $query = "SELECT * FROM players WHERE active='N'";
+                        $player_list = $client->query($query);
+                        $playerID = rand(0, count($player_list) - 1);
+                        $selected = $player_list[$playerID];
+                        //update player to active
+
+                        //send to client
+                        $welcome_message = 'Welcome to Sutton Quest [' . $selected->name . ']. You awaken to the noise of a man rushing past, brandishing a large fly swatter, yelling "We can\'t stop here, this is bat country!".';
+                        $reply = array('worldstr' => $world->get_worldstr(), 'playerID' => $selected->playerID, 'player_name' => $selected->name, 'locationX' => $selected->locationX, 'locationY' => $selected->locationY, 'welcome_message' => $welcome_message);
                         $client->send(json_encode($reply));
                         break;
                     default:

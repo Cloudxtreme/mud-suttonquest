@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    var playerID;
+    var playerName;
     //get updates every second
     /*
     setInterval(function() {
@@ -8,24 +10,31 @@ $(document).ready(function() {
             dataType: 'json',
             contentType: 'application/json'
         }).success( function(data) {
-            $('#result').append(data);
+            writeToChat(data);
         }).error( function() {
-            $('#result').append("could not reach server");
+            writeToChat("could not reach server");
         });
     }, 1000);
     */
     //perform initial load
+
     $.ajax({
         method: 'GET',
-        url: 'request.php?cmd=init&playerid=1',
+        url: 'request.php?cmd=init',
         dataType: 'json',
         contentType: 'application/json'
     }).success( function(data) {
         console.log(data);
         var json = JSON.parse(data);
-        //gets the map string, splits it from newline, then analyses char by char
-        var rows = json['worldstr'].split('\n');
+
+        //setup our player data, and welcome message
         console.log("playerID" + json['playerID']);
+        playerID = json['playerID'];
+        playerName = json['player_name'];
+        writeToChat(json['welcome_message']);
+
+        //generate map
+        var rows = json['worldstr'].split('\n');
         for (var i = 0; i < rows.length; i++) {
             var nodes = rows[i].split('');
             for (var j = 0; j < nodes.length; j++) {
@@ -42,7 +51,7 @@ $(document).ready(function() {
             }
         }
     }).error( function() {
-        $('#result').append("could not reach server");
+        $('#chat-log').append("could not reach server");
     });
 
     $('#submit-button').click( function(e) {
@@ -59,18 +68,22 @@ $(document).ready(function() {
             dataType: 'json',
             data: JSON.stringify({
 	            cmd: command,
-                body: cmd_body
+                body: cmd_body,
+                playerID: playerID,
+                player_name: playerName
             }),
             contentType: "application/json"
         }).success( function(data) {
-            $('#result').append('<p>' + data + '</p>');
-            var height = document.getElementById('result').scrollHeight - $('#result').height();
-            $('#result').scrollTop(height);
+            writeToChat(data);
         }).error( function() {
-            $('#result').append('<p>could not reach server</p>');
-            var height = document.getElementById('result').scrollHeight - $('#result').height();
-            $('#result').scrollTop(height);
+            writeToChat("could not reach server");
         });
         return false; //prevent page reload
     });
+
+    function writeToChat(string) {
+        $('#chat-log').append('<p>' + string + '</p>');
+        var height = document.getElementById('chat-log').scrollHeight - $('#chat-log').height();
+        $('#chat-log').scrollTop(height);
+    }
 });

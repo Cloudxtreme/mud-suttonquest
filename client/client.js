@@ -3,24 +3,40 @@ $(document).ready(function() {
     var playerName;
     var playerX;
     var playerY;
+    var interval;
     var world_grid = [];
 
     //get updates every second
     function start() {
-        setInterval(function() {
-            $.ajax({
-                method: 'GET',
-                url: 'request.php?cmd=update&playerid=' + playerID,
-                dataType: 'json',
-                contentType: 'application/json'
-            }).success( function(data) {
-                if(data) {
-                    writeToChat(data);
-                }
-            }).error( function() {
-                writeToChat("could not reach server");
-            });
-        }, 1000);
+        interval = setInterval(get_update, 2500);
+    }
+
+    function get_update() {
+        $.ajax({
+            method: 'GET',
+            url: 'request.php?cmd=update&playerid=' + playerID,
+            dataType: 'json',
+            contentType: 'application/json'
+        }).success( function(data) {
+            if(data && data != null) {
+                //writeToChat(data);
+                console.log(data);
+                var json = JSON.parse(data);
+                console.log(json['update_type']);
+                //for each update
+                $.each(json, function(index, update) {
+                    if(update.update_type == "say") {
+                        writeToChat('[' + update.time_queued +']' + ':[' + update.name + ']: ' + update.update_body);
+                    }
+                });
+            } else {
+                clearInterval(interval);
+                writeToChat("Could not connect to server, please refresh the page to try again.");
+            }
+        }).error( function() {
+            clearInterval(interval);
+            writeToChat("Could not connect to server, please refresh the page to try again.");
+        });
     }
 
     //perform initial load
@@ -30,17 +46,17 @@ $(document).ready(function() {
         dataType: 'json',
         contentType: 'application/json'
     }).success( function(data) {
-        if(data) {
+        if(data && data != null) {
             console.log(data);
             var json = JSON.parse(data);
 
             //setup our player data, and welcome message
-            console.log("playerID" + json['playerID']);
-            playerID = json['playerID'];
-            playerName = json['player_name'];
-            playerX = json['locationX'];
-            playerY = json['locationY'];
-            writeToChat(json['welcome_message']);
+            console.log("playerID" + json.playerID);
+            playerID = json.playerID;
+            playerName = json.player_name;
+            playerX = json.locationX;
+            playerY = json.locationY;
+            writeToChat(json.welcome_message);
 
             //generate map
             var rows = json['worldstr'].split('\n');
@@ -67,10 +83,10 @@ $(document).ready(function() {
             //start the updates
             start();
         } else {
-            writeToChat("Could not connect to server");
+            writeToChat("Could not connect to server, please refresh the page to try again.");
         }
     }).error( function() {
-        writeToChat("Could not connect to server");
+        writeToChat("Could not connect to server, please refresh the page to try again.");
     });
 
     $('#submit-button').click( function(e) {
@@ -95,7 +111,7 @@ $(document).ready(function() {
         }).success( function(data) {
             writeToChat(data);
         }).error( function() {
-            writeToChat("could not reach server");
+            writeToChat("Could not connect to server, please refresh the page to try again.");
         });
         return false; //prevent page reload
     });

@@ -79,8 +79,7 @@ class World
                 }
                 array_push($this->players, $temp);
 			}
-            //print_r($tempArray[0]->playerID);
-            print_r($this->players);
+            //print_r($this->players);
 		} else {
             printf("Failed to initialise players");
         }

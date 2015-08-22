@@ -26,7 +26,7 @@ $(document).ready(function() {
                 if(json.updates.length > 0) {
                     $.each(json.updates, function(index, update) {
                         if(update.update_type == "say") {
-                            writeToChat('[' + update.name + ']: ' + update.update_body);
+                            writeToChat('[<b>' + update.name + '</b>]: ' + update.update_body);
                         }
                     });
                 }

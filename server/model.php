@@ -67,13 +67,31 @@ class World
     public function update_players() {
         $this->players = array();
         $dbcon = mysqli_connect("localhost","suttonquest","Xzrr71^1","suttonquest");
-        $query = "SELECT * FROM players";
         if (mysqli_connect_errno()) {
 			printf("Failed to connect to MySQL: " . mysqli_connect_error());
 		}
-        if ($result = mysqli_query($dbcon, $query))
-		{
-			$tempArray = array();
+        
+        //reactivate players who have been inactive for > 1 minute
+        $query = "SELECT * FROM players WHERE active='Y' AND last_update_time < (NOW() - INTERVAL 1 MINUTE)";
+        $inactive_players = array();
+        if ($result = mysqli_query($dbcon, $query)) {
+			//loop through each row in the result set
+			while($row = $result->fetch_object())
+			{
+                array_push($inactive_players, $row);
+			}
+		}
+
+        if(count($inactive_players) > 0) {
+            foreach($inactive_players as $player) {
+                $id = $player->playerID;
+                mysqli_query($dbcon, "UPDATE players SET active='N' WHERE playerID='$id'");
+            }
+        }
+
+        //add players to our model
+        $query = "SELECT * FROM players";
+        if ($result = mysqli_query($dbcon, $query)) {
 			//loop through each row in the result set
 			while($row = $result->fetch_object())
 			{
@@ -147,6 +165,7 @@ class Node
     }
 
     protected function get_random_desc() {
+        mt_srand();
         $rand = mt_rand(0, count($this->descriptions) - 1);
         return $this->descriptions[$rand];
     }

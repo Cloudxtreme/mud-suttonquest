@@ -28,7 +28,7 @@ function connection_handler($client, $world) {
                         $query = "INSERT INTO update_queue (updateID, playerID, update_type, update_body) VALUES (NULL, '$playerID', '$cmd', '$body');";
                         $send = $client->insert($query);
                         if($send) {
-                            $msg = '[' . $player_name . ']:' . $body;
+                            $msg = '[<b>' . $player_name . '</b>]:' . $body;
                             $client->send(json_encode(array('msg' => 'say-success', 'desc' => $msg)));
                         } else {
                             $errormsg = 'failed to send message';
@@ -68,9 +68,7 @@ function connection_handler($client, $world) {
                         $playerID = $json['body']; //the playerID
                         printf("[+] Updating Client with playerID %d\n", $playerID);
 
-                        //gets a list of updates for a player, works by comparing the requesting players last update time, and returns all new updates since that time (excluding updates from the requesting player)
-                        /*$query = "SELECT a.last_update, time_queued, update_type, update_body, players.playerID, name FROM update_queue INNER JOIN players ON players.playerID=update_queue.playerID INNER JOIN (SELECT last_update, playerID FROM players WHERE playerID='$playerID') AS a ON a.playerID WHERE a.last_update < update_queue.time_queued AND update_queue.playerID !='$playerID';";*/
-
+                        //gets a list of updates for a player, works by comparing the requesting players last updateID, and returns all new updates since that time (excluding updates from the requesting player)
                         $query = "SELECT players.playerID, update_type, update_body, name, updateID FROM update_queue INNER JOIN players ON players.playerID=update_queue.playerID INNER JOIN (SELECT last_update, playerID FROM players WHERE playerID='$playerID') as a on a.playerID WHERE a.last_update < update_queue.updateID AND update_queue.playerID != '$playerID'";
 
                         $updates = $client->query($query);
@@ -79,8 +77,11 @@ function connection_handler($client, $world) {
                         //update our latest update ID
                         if ($num_updates > 0) {
                             $latest_update = $updates[$num_updates - 1]->updateID;
-                            //update last_update
-                            $update_query = "UPDATE players SET last_update='$latest_update' WHERE playerID='$playerID'";
+                            //update players last_update
+                            $update_query = "UPDATE players SET last_update='$latest_update', last_update_time=NOW() WHERE playerID='$playerID'";
+                            $client->insert($update_query);
+                        } else {
+                            $update_query = "UPDATE players SET last_update_time=NOW() WHERE playerID='$playerID'";
                             $client->insert($update_query);
                         }
 
@@ -97,20 +98,25 @@ function connection_handler($client, $world) {
                         $client->send(json_encode(array('updates' => $updates, 'others' => $others)));
                         break;
                     case 'init':
-                        //pick random player from pool, set player to active.
-                        //if player inactive for more than 10 seconds, set to inactive again, and respawn their location to base.
-                        //5 players on monsters, 5 on humans
-
                         //find an unactive player
                         $query = "SELECT * FROM players WHERE active='N'";
                         $player_list = $client->query($query);
-                        $playerID = mt_rand(0, count($player_list) - 1);
-                        printf("mt rand: %d\n", $playerID);
-                        $selected = $player_list[$playerID];
+                        mt_srand();
+                        $chosen = mt_rand(0, count($player_list) - 1);
+                        $selected = $player_list[$chosen];
+                        $playerID = $selected->playerID;
 
-                        //update player to active, and set last_update
-                        //$update_query = "UPDATE players SET last_update=NOW() WHERE playerID='$playerID'";
-                        //$client->insert($update_query);
+                        //get highest update ID
+                        $current_update_id = $client->query('SELECT updateID FROM update_queue ORDER BY updateID DESC LIMIT 1;');
+                        if($current_update_id) {
+                            $curr_id = $current_update_id[0]->updateID;
+                            //update player to active, and set last_update
+                            $update_player = "UPDATE players SET last_update='$curr_id', active='Y' WHERE playerID='$playerID'";
+                            $client->insert($update_player);
+                        } else {
+                            $update_player = "UPDATE players SET active='Y' WHERE playerID='$playerID'";
+                            $client->insert($update_player);
+                        }
 
                         //get room desc
                         $node = $world->get_node($selected->locationX, $selected->locationY);
@@ -118,7 +124,7 @@ function connection_handler($client, $world) {
                         //send to client
                         $welcome_message = 'Welcome to Sutton Quest, <b>' . $selected->name . '</b>. You awaken to the noise of a man rushing past, brandishing a large fly swatter, yelling <i>"We can\'t stop here, this is bat country!"</i>.' . $node->get_desc();
 
-                        $reply = array('worldstr' => $world->get_worldstr(), 'playerID' => $selected->playerID, 'player_name' => $selected->name, 'locationX' => $selected->locationX, 'locationY' => $selected->locationY, 'welcome_message' => $welcome_message);
+                        $reply = array('worldstr' => $world->get_worldstr(), 'playerID' => $playerID, 'player_name' => $selected->name, 'locationX' => $selected->locationX, 'locationY' => $selected->locationY, 'welcome_message' => $welcome_message);
                         $client->send(json_encode($reply));
                         break;
                     default:

@@ -22,22 +22,23 @@ CREATE TABLE players (
 	name VARCHAR(50),
 	active VARCHAR(1),
 	last_update INT,
+	last_update_time DATETIME,
 	locationX INT,
 	locationY INT,
 	CONSTRAINT players_playerID_pk
 		PRIMARY KEY (playerID)
 );
 
-INSERT INTO `suttonquest`.`players` (`playerID`, `name`, `active`, `last_update`, `locationX`, `locationY`) VALUES
-(1, 'Abe', 'N', 0, 1, 9),
-(2, 'Dr. Mario', 'N', 0, 1, 9),
-(3, 'Ronald McDonald', 'N', 0, 1, 9),
-(4, 'Tony Blair', 'N', 0, 1, 9),
-(5, 'Frankenstein', 'N', 0, 1, 9),
-(6, 'Danger Mouse', 'N', 0, 1, 9),
-(7, 'Godzilla', 'N', 0, 1, 9),
-(8, 'The Mummy', 'N', 0, 1, 9),
-(9, 'Yoshimitsu', 'N', 0, 1, 9),
-(10, 'Donkey Kong', 'N', 0, 1, 9);
+INSERT INTO `suttonquest`.`players` (`playerID`, `name`, `active`, `last_update`, `locationX`, `locationY`, `last_update_time`) VALUES
+(1, 'Abe', 'N', 0, 1, 9, NULL),
+(2, 'Dr. Mario', 'N', 0, 1, 9, NULL),
+(3, 'Ronald McDonald', 'N', 0, 1, 9, NULL),
+(4, 'Tony Blair', 'N', 0, 1, 9, NULL),
+(5, 'Frankenstein', 'N', 0, 1, 9, NULL),
+(6, 'Danger Mouse', 'N', 0, 1, 9, NULL),
+(7, 'Godzilla', 'N', 0, 1, 9, NULL),
+(8, 'The Mummy', 'N', 0, 1, 9, NULL),
+(9, 'Yoshimitsu', 'N', 0, 1, 9, NULL),
+(10, 'Donkey Kong', 'N', 0, 1, 9, NULL);
 
 ENGINE=InnoDB DEFAULT CHARSET=latin1;

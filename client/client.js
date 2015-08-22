@@ -5,6 +5,7 @@ $(document).ready(function() {
     var playerY;
     var interval;
     var world_grid = [];
+    var other_occupants = [];
 
     //get updates every second
     function start() {
@@ -21,7 +22,7 @@ $(document).ready(function() {
             if(data) {
                 console.log(data);
                 var json = JSON.parse(data);
-                //for each update
+                //process the updates
                 if(json.updates.length > 0) {
                     $.each(json.updates, function(index, update) {
                         if(update.update_type == "say") {
@@ -29,11 +30,8 @@ $(document).ready(function() {
                         }
                     });
                 }
-                if(json.others.length > 0) {
-                    $.each(json.others, function(index, other) {
-                        writeToChat(other + 'is in the room.');
-                    });
-                }
+                //process the others in the room
+                check_others(json.others);
             } else {
                 clearInterval(interval);
                 writeToChat("Could not connect to server, please refresh the page to try again.");
@@ -94,6 +92,7 @@ $(document).ready(function() {
         writeToChat("Could not connect to server, please refresh the page to try again.");
     });
 
+    //event handler for submit
     $('#submit-button').click( function(e) {
         e.preventDefault(); //prevent page reload
 
@@ -125,25 +124,6 @@ $(document).ready(function() {
                     world_grid[playerX][playerY].removeClass("current-location");
                     playerX = json.locationX;
                     playerY = json.locationY;
-                    if(json.others.length > 0) {
-                        if (json.others.length == 1) {
-                            var others = 'Looking around the room, you see <b>' + json.others[0].name + '</b>. He doesn\'t look pleased to see you.';
-                            writeToChat(others);
-                        } else {
-                            var others = 'Looking around the room, you see the following individuals, ';
-                            $.each(json.others, function(index, player) {
-                                if(!(index == json.others.length - 1)) {
-                                    others += '<b>' + player.name + '</b>, ';
-                                } else {
-                                    others += 'and <b>' + player.name + '</b>.';
-                                }
-                            });
-                            others += ' They don\'t look pleased to see you.';
-                            writeToChat(others);
-                        }
-                    } else {
-                        writeToChat("You don't see any other individuals in the room.");
-                    }
                     world_grid[playerX][playerY].addClass("current-location");
                 }
                 if(json.msg == 'say-success') {
@@ -159,8 +139,38 @@ $(document).ready(function() {
         return false; //prevent page reload
     });
 
-    function writeToChat(string) {
-        $('#chat-log').append('<p>' + string + '</p>');
+    function check_others(others) {
+        /*
+        if($.inArray(other.name, other_occupants) != -1) {
+            //exists
+        } else {
+            //add it
+        }*/
+
+
+        if(others.length > 0) {
+            if (others.length == 1) {
+                var str = 'Looking around the room, you see <b>' + others[0] + '</b>. He doesn\'t look pleased to see you.';
+                writeToChat(str);
+            } else {
+                var str = 'Looking around the room, you see the following individuals, ';
+                $.each(others, function(index, player) {
+                    if(!(index == others.length - 1)) {
+                        str += '<b>' + player + '</b>, ';
+                    } else {
+                        str += 'and <b>' + player + '</b>.';
+                    }
+                });
+                str += ' They don\'t look pleased to see you.';
+                writeToChat(str);
+            }
+        } else {
+            writeToChat("You don't see any other individuals in the room.");
+        }
+    }
+
+    function writeToChat(str) {
+        $('#chat-log').append('<p>' + str + '</p>');
         var height = document.getElementById('chat-log').scrollHeight - $('#chat-log').height();
         $('#chat-log').scrollTop(height);
     }

@@ -58,15 +58,8 @@ function connection_handler($client, $world) {
                             $query = "UPDATE players SET locationX='$locationX', locationY='$locationY' WHERE playerID='$playerID';";
                             $send = $client->insert($query);
                             if($send) {
-                                //add to the update_queue
-
-                                //get other players occupying the same room
-                                $query_room = "SELECT * FROM players WHERE locationX='$locationX' AND locationY='$locationY' AND playerID != '$playerID'";
-
-                                $players_in_room = $client->query($query_room);
-
-                                //return to client success, with description of room + any occupants?
-                                $client->send(json_encode(array('msg' => 'move-success', 'desc' => $node->get_desc(), 'locationX' => $locationX, 'locationY' => $locationY, 'others' => $players_in_room)));
+                                //return to client success, with description of room
+                                $client->send(json_encode(array('msg' => 'move-success', 'desc' => $node->get_desc(), 'locationX' => $locationX, 'locationY' => $locationY)));
                             }
                         } else {
                             $errormsg = '[' . date('Y-m-d H:i:s') . ']: failed to move, check if valid';
@@ -81,9 +74,9 @@ function connection_handler($client, $world) {
                         $query = "SELECT a.last_update, time_queued, update_type, update_body, players.playerID, name FROM update_queue INNER JOIN players ON players.playerID=update_queue.playerID INNER JOIN (SELECT last_update, playerID FROM players WHERE playerID='$playerID') AS a ON a.playerID WHERE a.last_update < update_queue.time_queued AND update_queue.playerID !='$playerID';";
 
                         $updates = $client->query($query);
-                        $others = array();
 
-                        //check if anybody has entered the room, append names to result array if other occupants
+                        //check if anybody has entered the room
+                        $others = array();
                         $others_in_room = $world->other_occupants($playerID);
                         if(!empty($others_in_room)) {
                             foreach($others_in_room as $other) {

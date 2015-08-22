@@ -59,20 +59,18 @@ class SuttonQuestRequest {
                 $send = array('cmd' => $cmd[1], 'body' => $body[1]);
                 return $this->response(json_encode($send));
             } else {
-                // need to fix this so it doesnt go through server
                 return $this->response(json_encode(array('error' => 'badly formatted request')));
             }
         }
     }
 
     private function response($message, $status = 200) {
-        //server
         $socket = socket_create(AF_INET, SOCK_STREAM, 0);
         $result = socket_connect($socket, $this->address, $this->port);
         socket_write($socket, $message, strlen($message));
         $data = socket_read($socket, 2048);
         socket_close($socket);
-        //response to client
+
         header("HTTP/1.1 " . $status . " " . $this->_requestStatus($status));
 		return json_encode($data);
     }

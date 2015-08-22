@@ -171,6 +171,7 @@ class Objective extends Node
 
     public function __construct($type) {
         parent::__construct($type, true);
+        $this->descrption = 'Adorning the room are several large switches and a gargantuant device central in the room. It looks inactive.';
     }
 }
 
@@ -181,6 +182,7 @@ class Spawn extends Node
 
     public function __construct($type) {
         parent::__construct($type, true);
+        $this->description = 'Tapestries decorate the walls of this room. Although they may once have been brilliant in hue, they now hang in graying tatters. In the center of the room you can perceive a spawning pool which is making soft gurgling noises.';
     }
 }
 

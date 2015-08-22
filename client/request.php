@@ -70,7 +70,7 @@ class SuttonQuestRequest {
         $socket = socket_create(AF_INET, SOCK_STREAM, 0);
         $result = socket_connect($socket, $this->address, $this->port);
         socket_write($socket, $message, strlen($message));
-        $data = socket_read($socket, 1024);
+        $data = socket_read($socket, 2048);
         socket_close($socket);
         //response to client
         header("HTTP/1.1 " . $status . " " . $this->_requestStatus($status));

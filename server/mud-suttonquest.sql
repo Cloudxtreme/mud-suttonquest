@@ -30,15 +30,15 @@ CREATE TABLE players (
 );
 
 INSERT INTO `suttonquest`.`players` (`playerID`, `name`, `active`, `last_update`, `locationX`, `locationY`) VALUES
-(1, 'Abe', 'N', NULL, 0, 9),
-(2, 'Dr. Mario', 'N', NULL, 0, 9),
-(3, 'Ronald McDonald', 'N', NULL, 0, 9),
-(4, 'Tony Blair', 'N', NULL, 0, 9),
-(5, 'Frankenstein', 'N', NULL, 0, 9),
-(6, 'Danger Mouse', 'N', NULL, 20, 9),
-(7, 'Godzilla', 'N', NULL, 20, 9),
-(8, 'The Mummy', 'N', NULL, 20, 9),
-(9, 'Yoshimitsu', 'N', NULL, 20, 9),
-(10, 'Donkey Kong', 'N', NULL, 20, 9);
+(1, 'Abe', 'N', NULL, 1, 9),
+(2, 'Dr. Mario', 'N', NULL, 1, 9),
+(3, 'Ronald McDonald', 'N', NULL, 1, 9),
+(4, 'Tony Blair', 'N', NULL, 1, 9),
+(5, 'Frankenstein', 'N', NULL, 1, 9),
+(6, 'Danger Mouse', 'N', NULL, 1, 9),
+(7, 'Godzilla', 'N', NULL, 1, 9),
+(8, 'The Mummy', 'N', NULL, 1, 9),
+(9, 'Yoshimitsu', 'N', NULL, 1, 9),
+(10, 'Donkey Kong', 'N', NULL, 1, 9);
 
 ENGINE=InnoDB DEFAULT CHARSET=latin1;

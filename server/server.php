@@ -106,10 +106,10 @@ function connection_handler($client, $world) {
                         $client->insert($update_query);
 
                         //get room desc
-                        //$node = $world->get_node($selected->locationX, $selected->locationY);
+                        $node = $world->get_node($selected->locationX, $selected->locationY);
 
                         //send to client
-                        $welcome_message = 'Welcome to Sutton Quest, <b>' . $selected->name . '</b>. You awaken to the noise of a man rushing past, brandishing a large fly swatter, yelling <i>"We can\'t stop here, this is bat country!"</i>.';
+                        $welcome_message = 'Welcome to Sutton Quest, <b>' . $selected->name . '</b>. You awaken to the noise of a man rushing past, brandishing a large fly swatter, yelling <i>"We can\'t stop here, this is bat country!"</i>.' . $node->get_desc();
 
                         $reply = array('worldstr' => $world->get_worldstr(), 'playerID' => $selected->playerID, 'player_name' => $selected->name, 'locationX' => $selected->locationX, 'locationY' => $selected->locationY, 'welcome_message' => $welcome_message);
                         $client->send(json_encode($reply));

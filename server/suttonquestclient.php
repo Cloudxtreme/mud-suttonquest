@@ -30,7 +30,7 @@ class SuttonQuestClient {
     }
 
     public function read() {
-        if(($buffer = socket_read($this->_connection, 1024, PHP_BINARY_READ)) === false) {
+        if(($buffer = socket_read($this->_connection, 2048, PHP_BINARY_READ)) === false) {
             return null;
         }
 

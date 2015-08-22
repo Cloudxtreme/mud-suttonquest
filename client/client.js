@@ -120,6 +120,8 @@ $(document).ready(function() {
                 console.log(json);
                 var json = JSON.parse(data);
                 if(json.msg == 'move-success') {
+                    //write new room desc to chat, update location, and erase other occupants array
+                    other_occupants.length = 0; //erase
                     writeToChat(json.desc);
                     world_grid[playerX][playerY].removeClass("current-location");
                     playerX = json.locationX;
@@ -139,33 +141,45 @@ $(document).ready(function() {
         return false; //prevent page reload
     });
 
+    //check if others are in the room, and update chat window accordingly
     function check_others(others) {
-        /*
-        if($.inArray(other.name, other_occupants) != -1) {
-            //exists
-        } else {
-            //add it
-        }*/
-
-
-        if(others.length > 0) {
-            if (others.length == 1) {
-                var str = 'Looking around the room, you see <b>' + others[0] + '</b>. He doesn\'t look pleased to see you.';
-                writeToChat(str);
+        //add all others to the array
+        var new_player = false;
+        $.each(others, function(index, other) {
+            if($.inArray(other, other_occupants) != -1) {
+                //exists
             } else {
-                var str = 'Looking around the room, you see the following individuals, ';
-                $.each(others, function(index, player) {
-                    if(!(index == others.length - 1)) {
-                        str += '<b>' + player + '</b>, ';
-                    } else {
-                        str += 'and <b>' + player + '</b>.';
-                    }
-                });
-                str += ' They don\'t look pleased to see you.';
-                writeToChat(str);
+                new_player = true;
+                other_occupants.push(other);
             }
-        } else {
-            writeToChat("You don't see any other individuals in the room.");
+        });
+
+        //if others is smaller than other_occupants, means we have lost a player.
+        if(others.length < other_occupants.length) {
+            other_occupants.length = 0; //clear the array
+        }
+        
+        //if new player is triggered, write to chat window, i.e. new player entered the room
+        if(new_player) {
+            if(others.length > 0) {
+                if (others.length == 1) {
+                    var str = 'Looking around the room, you see <b>' + others[0] + '</b>. He doesn\'t look pleased to see you.';
+                    writeToChat(str);
+                } else {
+                    var str = 'Looking around the room, you see the following individuals, ';
+                    $.each(others, function(index, other) {
+                        if(!(index == others.length - 1)) {
+                            str += '<b>' + other + '</b>, ';
+                        } else {
+                            str += 'and <b>' + other + '</b>.';
+                        }
+                    });
+                    str += ' They don\'t look pleased to see you.';
+                    writeToChat(str);
+                }
+            } else {
+                writeToChat("You don't see any other individuals in this room.");
+            }
         }
     }
 

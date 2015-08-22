@@ -1,9 +1,7 @@
 +set players to active, to prevent multiple players connecting on same player, need to have server set players who last update greater than 10seconds to inactive.
-+set room intro + players list
+
 +say, yell, tell logic
 
-
-+set spawning pool intro properly
 
 +sql too many connections error - might be fixed.
 +seems to be a bug with player selection.

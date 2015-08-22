@@ -25,13 +25,13 @@ function connection_handler($client, $world) {
                         $body = $json['body'];
                         $playerID = $json['playerID'];
                         $player_name = $json['player_name'];
-                        $query = "INSERT INTO update_queue (updateID, playerID, time_queued, update_type, update_body) VALUES (NULL, '$playerID', NOW(), '$cmd', '$body');";
+                        $query = "INSERT INTO update_queue (updateID, playerID, update_type, update_body) VALUES (NULL, '$playerID', '$cmd', '$body');";
                         $send = $client->insert($query);
                         if($send) {
-                            $msg = '[' . date('Y-m-d H:i:s') . ']:[' . $player_name . ']:' . $body;
+                            $msg = '[' . $player_name . ']:' . $body;
                             $client->send(json_encode(array('msg' => 'say-success', 'desc' => $msg)));
                         } else {
-                            $errormsg = '[' . date('Y-m-d H:i:s') . ']: failed to send message';
+                            $errormsg = 'failed to send message';
                             $client->send(json_encode(array('msg' => 'error', 'desc' => $errormsg)));
                         }
                         break;
@@ -69,9 +69,20 @@ function connection_handler($client, $world) {
                         printf("[+] Updating Client with playerID %d\n", $playerID);
 
                         //gets a list of updates for a player, works by comparing the requesting players last update time, and returns all new updates since that time (excluding updates from the requesting player)
-                        $query = "SELECT a.last_update, time_queued, update_type, update_body, players.playerID, name FROM update_queue INNER JOIN players ON players.playerID=update_queue.playerID INNER JOIN (SELECT last_update, playerID FROM players WHERE playerID='$playerID') AS a ON a.playerID WHERE a.last_update < update_queue.time_queued AND update_queue.playerID !='$playerID';";
+                        /*$query = "SELECT a.last_update, time_queued, update_type, update_body, players.playerID, name FROM update_queue INNER JOIN players ON players.playerID=update_queue.playerID INNER JOIN (SELECT last_update, playerID FROM players WHERE playerID='$playerID') AS a ON a.playerID WHERE a.last_update < update_queue.time_queued AND update_queue.playerID !='$playerID';";*/
+
+                        $query = "SELECT players.playerID, update_type, update_body, name, updateID FROM update_queue INNER JOIN players ON players.playerID=update_queue.playerID INNER JOIN (SELECT last_update, playerID FROM players WHERE playerID='$playerID') as a on a.playerID WHERE a.last_update < update_queue.updateID AND update_queue.playerID != '$playerID'";
 
                         $updates = $client->query($query);
+                        $num_updates = count($updates);
+
+                        //update our latest update ID
+                        if ($num_updates > 0) {
+                            $latest_update = $updates[$num_updates - 1]->updateID;
+                            //update last_update
+                            $update_query = "UPDATE players SET last_update='$latest_update' WHERE playerID='$playerID'";
+                            $client->insert($update_query);
+                        }
 
                         //check other room occupants
                         $others = array();
@@ -84,10 +95,6 @@ function connection_handler($client, $world) {
 
                         //send updates to the client
                         $client->send(json_encode(array('updates' => $updates, 'others' => $others)));
-
-                        //update last_update time
-                        $update_query = "UPDATE players SET last_update=NOW() WHERE playerID='$playerID'";
-                        $client->insert($update_query);
                         break;
                     case 'init':
                         //pick random player from pool, set player to active.
@@ -102,8 +109,8 @@ function connection_handler($client, $world) {
                         $selected = $player_list[$playerID];
 
                         //update player to active, and set last_update
-                        $update_query = "UPDATE players SET last_update=NOW() WHERE playerID='$playerID'";
-                        $client->insert($update_query);
+                        //$update_query = "UPDATE players SET last_update=NOW() WHERE playerID='$playerID'";
+                        //$client->insert($update_query);
 
                         //get room desc
                         $node = $world->get_node($selected->locationX, $selected->locationY);

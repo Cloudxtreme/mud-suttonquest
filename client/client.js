@@ -26,7 +26,7 @@ $(document).ready(function() {
                 if(json.updates.length > 0) {
                     $.each(json.updates, function(index, update) {
                         if(update.update_type == "say") {
-                            writeToChat('[' + update.time_queued +']' + ':[' + update.name + ']: ' + update.update_body);
+                            writeToChat('[' + update.name + ']: ' + update.update_body);
                         }
                     });
                 }
@@ -158,7 +158,7 @@ $(document).ready(function() {
         if(others.length < other_occupants.length) {
             other_occupants.length = 0; //clear the array
         }
-        
+
         //if new player is triggered, write to chat window, i.e. new player entered the room
         if(new_player) {
             if(others.length > 0) {

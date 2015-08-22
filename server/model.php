@@ -147,7 +147,7 @@ class Node
     }
 
     protected function get_random_desc() {
-        $rand = rand(0, count($this->descriptions) - 1);
+        $rand = mt_rand(0, count($this->descriptions) - 1);
         return $this->descriptions[$rand];
     }
 }

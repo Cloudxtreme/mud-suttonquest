@@ -36,8 +36,6 @@ function connection_handler($client, $world) {
                         }
                         break;
                     case 'move':
-                        //adds the message to the update queue
-                        $cmd = $json['cmd'];
                         $body = $json['body'];
                         $playerID = $json['playerID'];
                         $locationX = $json['locationX'];
@@ -75,7 +73,7 @@ function connection_handler($client, $world) {
 
                         $updates = $client->query($query);
 
-                        //check if anybody has entered the room
+                        //check other room occupants
                         $others = array();
                         $others_in_room = $world->other_occupants($playerID);
                         if(!empty($others_in_room)) {
@@ -99,7 +97,8 @@ function connection_handler($client, $world) {
                         //find an unactive player
                         $query = "SELECT * FROM players WHERE active='N'";
                         $player_list = $client->query($query);
-                        $playerID = rand(0, count($player_list) - 1);
+                        $playerID = mt_rand(0, count($player_list) - 1);
+                        printf("mt rand: %d\n", $playerID);
                         $selected = $player_list[$playerID];
 
                         //update player to active, and set last_update

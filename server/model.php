@@ -10,7 +10,7 @@ abstract class Teams
 class World
 {
     private $nodes = array();
-    private $players = array(); //stores the player location
+    private $players; //stores the player location
     private $worldstr = '';
 
     public function __construct($world_file) {
@@ -60,8 +60,9 @@ class World
 
     //read players from DB
     public function update_players() {
-        $this->_dbcon = mysqli_connect("localhost","suttonquest","Xzrr71^1","suttonquest");
-        $query = "SELECT * FROM players WHERE active='N'";
+        $this->players = array();
+        $dbcon = mysqli_connect("localhost","suttonquest","Xzrr71^1","suttonquest");
+        $query = "SELECT * FROM players";
         if (mysqli_connect_errno()) {
 			printf("Failed to connect to MySQL: " . mysqli_connect_error());
 		}
@@ -79,10 +80,10 @@ class World
                 }
                 array_push($this->players, $temp);
 			}
-            //print_r($this->players);
 		} else {
-            printf("Failed to initialise players");
+            printf("Failed to update players");
         }
+        mysqli_close($dbcon);
     }
 }
 

@@ -41,6 +41,9 @@ class SuttonQuestServer {
             $client = socket_accept($this->socket_server);
             $socket_client = new SuttonQuestClient($client);
 
+            //update players
+            $this->world->update_players();
+
             if (is_array ($this->conn_handler)) {
                 $obj = $this->conn_handler[0];
                 $method = $this->conn_handler[1];

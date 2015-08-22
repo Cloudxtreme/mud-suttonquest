@@ -77,11 +77,22 @@ function connection_handler($client, $world) {
                         $playerID = $json['body']; //the playerID
                         printf("[+] Updating Client with playerID %d\n", $playerID);
 
-                        //gets a list of updates for a player, works by comparing the requesting players last update time, and returns all new updates since that time
+                        //gets a list of updates for a player, works by comparing the requesting players last update time, and returns all new updates since that time (excluding updates from the requesting player)
                         $query = "SELECT a.last_update, time_queued, update_type, update_body, players.playerID, name FROM update_queue INNER JOIN players ON players.playerID=update_queue.playerID INNER JOIN (SELECT last_update, playerID FROM players WHERE playerID='$playerID') AS a ON a.playerID WHERE a.last_update < update_queue.time_queued AND update_queue.playerID !='$playerID';";
 
+                        $updates = $client->query($query);
+                        $others = array();
+
+                        //check if anybody has entered the room, append names to result array if other occupants
+                        $others_in_room = $world->other_occupants($playerID);
+                        if(!empty($others_in_room)) {
+                            foreach($others_in_room as $other) {
+                                array_push($others, $other->get_name());
+                            }
+                        }
+
                         //send updates to the client
-                        $client->send(json_encode($client->query($query)));
+                        $client->send(json_encode(array('updates' => $updates, 'others' => $others)));
 
                         //update last_update time
                         $update_query = "UPDATE players SET last_update=NOW() WHERE playerID='$playerID'";

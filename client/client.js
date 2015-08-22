@@ -21,13 +21,19 @@ $(document).ready(function() {
             if(data) {
                 console.log(data);
                 var json = JSON.parse(data);
-                console.log(json['update_type']);
                 //for each update
-                $.each(json, function(index, update) {
-                    if(update.update_type == "say") {
-                        writeToChat('[' + update.time_queued +']' + ':[' + update.name + ']: ' + update.update_body);
-                    }
-                });
+                if(json.updates.length > 0) {
+                    $.each(json.updates, function(index, update) {
+                        if(update.update_type == "say") {
+                            writeToChat('[' + update.time_queued +']' + ':[' + update.name + ']: ' + update.update_body);
+                        }
+                    });
+                }
+                if(json.others.length > 0) {
+                    $.each(json.others, function(index, other) {
+                        writeToChat(other + 'is in the room.');
+                    });
+                }
             } else {
                 clearInterval(interval);
                 writeToChat("Could not connect to server, please refresh the page to try again.");
@@ -38,7 +44,7 @@ $(document).ready(function() {
         });
     }
 
-    //perform initial load
+    //inital load
     $.ajax({
         method: 'GET',
         url: 'request.php?cmd=init',

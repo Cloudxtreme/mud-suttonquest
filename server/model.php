@@ -54,8 +54,13 @@ class World
         return $this->worldstr;
     }
 
-    public function get_player($id) {
-        return $this->players[$id];
+    //find a player from ID
+    public function get_player($playerID) {
+        foreach($this->players as $player) {
+            if($player->get_id() == $playerID) {
+                return $player;
+            }
+        }
     }
 
     //read players from DB
@@ -66,7 +71,7 @@ class World
         if (mysqli_connect_errno()) {
 			printf("Failed to connect to MySQL: " . mysqli_connect_error());
 		}
-        if ($result = mysqli_query($this->_dbcon, $query))
+        if ($result = mysqli_query($dbcon, $query))
 		{
 			$tempArray = array();
 			//loop through each row in the result set
@@ -84,6 +89,23 @@ class World
             printf("Failed to update players");
         }
         mysqli_close($dbcon);
+    }
+
+    //check if anybody else is in a room by playerID
+    public function other_occupants($playerID) {
+        //find playerID location, compare to each player where ID is not the same
+        $player = $this->get_player($playerID);
+        $playerlocation = $player->get_location();
+        $locationX = $playerlocation['x'];
+        $locationY = $playerlocation['y'];
+        $others_in_room = array();
+        foreach($this->players as $other) {
+            $o_location = $other->get_location();
+            if($o_location['x'] == $locationX && $o_location['y'] == $locationY && $other->get_id() != $playerID) {
+                array_push($others_in_room, $other);
+            }
+        }
+        return $others_in_room;
     }
 }
 
